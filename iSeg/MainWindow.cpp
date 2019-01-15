@@ -434,7 +434,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	cb_workpicturevisible = new QCheckBox("Show Image", this);
 	cb_workpicturevisible->setChecked(true);
 
-	bmp_show = new ImageViewerWidget(this, "new window", Qt::WDestructiveClose | Qt::WResizeNoErase);
+	bmp_show = new ImageViewerWidget(this);
 	lb_source = new QLabel("Source", this);
 	lb_target = new QLabel("Target", this);
 	bmp_scroller = new Q3ScrollView(this);
@@ -477,7 +477,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	swapAllBtn = new QPushButton(QIcon(m_picpath.absFilePath(QString("swap.png")).ascii()), "3D", this);
 	swapAllBtn->setFixedWidth(50);
 
-	work_show = new ImageViewerWidget(this, "new window", Qt::WDestructiveClose | Qt::WResizeNoErase);
+	work_show = new ImageViewerWidget(this);
 	sl_contrastwork = new QSlider(Qt::Horizontal, this);
 	sl_contrastwork->setRange(0, 100);
 	sl_brightnesswork = new QSlider(Qt::Horizontal, this);

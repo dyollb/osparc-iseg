@@ -14,23 +14,24 @@
 
 #include "Core/Pair.h"
 
-#include <QWidget>
+#include <QGraphicsView>
 
 #include <vector>
 
 class Q3Action;
+class QGraphicsScene;
+class QGraphicsPixmapItem;
 
 namespace iseg {
 
 class bmphandler;
 class SlicesHandler;
 
-class ImageViewerWidget : public QWidget
+class ImageViewerWidget : public QGraphicsView
 {
 	Q_OBJECT
 public:
-	ImageViewerWidget(QWidget* parent = 0, const char* name = 0,
-			Qt::WindowFlags wFlags = 0);
+	ImageViewerWidget(QWidget* parent = 0);
 	~ImageViewerWidget();
 	void init(SlicesHandler* hand3D, bool bmporwork);
 	void update();
@@ -95,6 +96,9 @@ private:
 	void mode_changed(unsigned char newmode, bool updatescale = true);
 
 	QPainter* painter;
+	QGraphicsScene* scene = nullptr;
+	QGraphicsPixmapItem* pixmap = nullptr;
+
 	unsigned char mode;
 	float brightness;
 	float contrast;

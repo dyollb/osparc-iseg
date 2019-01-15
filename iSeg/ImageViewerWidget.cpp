@@ -25,6 +25,7 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QWheelEvent>
+#include <QGraphicsPixmapItem>
 #include <algorithm>
 #include <q3popupmenu.h>
 #include <qapplication.h>
@@ -45,11 +46,17 @@
 using namespace std;
 using namespace iseg;
 
-ImageViewerWidget::ImageViewerWidget(QWidget* parent, const char* name, Qt::WindowFlags wFlags)
-		: QWidget(parent, name, wFlags), tissuevisible(true), picturevisible(true),
+ImageViewerWidget::ImageViewerWidget(QWidget* parent)
+		: QGraphicsView(parent), tissuevisible(true), picturevisible(true),
 			markvisible(true), overlayvisible(false), workborder(false),
 			crosshairxvisible(false), crosshairyvisible(false) //,showvp(false)
 {
+	scene = new QGraphicsScene;
+	setScene(scene);
+
+	pixmap = new QGraphicsPixmapItem;
+	scene->addItem(pixmap);
+
 	brightness = scaleoffset = 0.0f;
 	contrast = scalefactor = 1.0f;
 	mode = 1;
