@@ -53,7 +53,7 @@ public:
 	void setMousePosZoom(QPoint point) { mousePosZoom = point; }
 
 protected:
-	void paintEvent(QPaintEvent* e);
+	//void paintEvent(QPaintEvent* e);
 	void mousePressEvent(QMouseEvent* e);
 	void mouseReleaseEvent(QMouseEvent* e);
 	void mouseDoubleClickEvent(QMouseEvent* e);
@@ -61,6 +61,8 @@ protected:
 	void wheelEvent(QWheelEvent* e);
 	void contextMenuEvent(QContextMenuEvent* e);
 	void update_scaleoffsetfactor();
+
+	void repaint_pixmap();
 
 signals:
 	void addmark_sign(Point p);

@@ -222,5 +222,7 @@ IF(APPLE)
 	INSTALL_BUNDLE()
 ENDIF()
 
-ADD_EXECUTABLE(test-qgraphicsview test.cpp)
+QT4_WRAP_CPP(testMOCSrcs SynchronizedImageViews.h)
+
+ADD_EXECUTABLE(test-qgraphicsview test.cpp SynchronizedImageViews.h SynchronizedImageViews.cpp ${testMOCSrcs})
 TARGET_LINK_LIBRARIES(test-qgraphicsview ${QT_QTMAIN_LIBRARY} ${MY_EXTERNAL_LINK_LIBRARIES})

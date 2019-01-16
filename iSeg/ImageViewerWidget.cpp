@@ -57,6 +57,9 @@ ImageViewerWidget::ImageViewerWidget(QWidget* parent)
 	pixmap = new QGraphicsPixmapItem;
 	scene->addItem(pixmap);
 
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
 	brightness = scaleoffset = 0.0f;
 	contrast = scalefactor = 1.0f;
 	mode = 1;
@@ -165,21 +168,23 @@ void ImageViewerWidget::pixelsize_changed(Pair pixelsize1)
 		pixelsize = pixelsize1;
 		setFixedSize((int)width * zoom * pixelsize.high,
 				(int)height * zoom * pixelsize.low);
-		repaint();
+		repaint_pixmap();
 	}
 }
 
-void ImageViewerWidget::paintEvent(QPaintEvent* e)
+void ImageViewerWidget::repaint_pixmap()
 {
 	marks = handler3D->get_activebmphandler()->return_marks();
 	if (image.size() != QSize(0, 0)) // is an image loaded?
 	{
 		{
-			QPainter painter(this);
-			painter.setClipRect(e->rect());
-			painter.scale(zoom * pixelsize.high, zoom * pixelsize.low);
-			painter.drawImage(0, 0, image_decorated);
-			painter.setPen(QPen(actual_color));
+			pixmap->setPixmap(QPixmap::fromImage(image_decorated));
+
+			//QPainter painter(this);
+			//painter.setClipRect(e->rect());
+			//painter.scale(zoom * pixelsize.high, zoom * pixelsize.low);
+			//painter.drawImage(0, 0, image_decorated);
+			//painter.setPen(QPen(actual_color));
 
 			if (marks != nullptr)
 			{
@@ -188,35 +193,43 @@ void ImageViewerWidget::paintEvent(QPaintEvent* e)
 				{
 					std::tie(r, g, b) = TissueInfos::GetTissueColorMapped(m.mark);
 					QColor qc1(r, g, b);
-					painter.setPen(QPen(qc1));
+					//painter.setPen(QPen(qc1));
 
-					painter.drawLine(
-							int(m.p.px) - 2, int(height - m.p.py) - 3,
-							int(m.p.px) + 2, int(height - m.p.py) + 1);
-					painter.drawLine(
-							int(m.p.px) - 2, int(height - m.p.py) + 1,
-							int(m.p.px) + 2, int(height - m.p.py) - 3);
+					scene->addLine(QLineF(
+						m.p.px - 2.f, height - m.p.py - 3.f, 
+						m.p.px + 2.f, height - m.p.py + 1.f), qc1);
+					scene->addLine(QLineF(
+						m.p.px - 2.f, height - m.p.py + 1.f, 
+						m.p.px + 2.f, height - m.p.py - 3.f), qc1);
+
+					//painter.drawLine(
+					//		int(m.p.px) - 2, int(height - m.p.py) - 3,
+					//		int(m.p.px) + 2, int(height - m.p.py) + 1);
+					//painter.drawLine(
+					//		int(m.p.px) - 2, int(height - m.p.py) + 1,
+					//		int(m.p.px) + 2, int(height - m.p.py) - 3);
 					if (!m.name.empty())
 					{
-						painter.drawText(int(m.p.px) + 3,
-								int(height - m.p.py) + 1,
-								QString(m.name.c_str()));
+						//painter.drawText(int(m.p.px) + 3,
+						//		int(height - m.p.py) + 1,
+						//		QString(m.name.c_str()));
+						//scene->addText()
 					}
 				}
 			}
 		}
 		{
-			QPainter painter1(this);
-
-			float dx = zoom * pixelsize.high;
-			float dy = zoom * pixelsize.low;
-
-			for (auto& p : vpdyn)
-			{
-				painter1.fillRect(
-						int(dx * p.px), int(dy * (height - p.py - 1)),
-						int(dx + 0.999f), int(dy + 0.999f), actual_color);
-			}
+			//QPainter painter1(this);
+			//
+			//float dx = zoom * pixelsize.high;
+			//float dy = zoom * pixelsize.low;
+			//
+			//for (auto& p : vpdyn)
+			//{
+			//	painter1.fillRect(
+			//			int(dx * p.px), int(dy * (height - p.py - 1)),
+			//			int(dx + 0.999f), int(dy + 0.999f), actual_color);
+			//}
 		}
 	}
 }
@@ -252,23 +265,24 @@ void ImageViewerWidget::bmphand_changed(bmphandler* bmph)
 	}
 	else
 	{
-		repaint();
+		repaint_pixmap();
 	}
 }
 
 void ImageViewerWidget::overlay_changed()
 {
 	reload_bits();
-	repaint();
+	repaint_pixmap();
 }
 
 void ImageViewerWidget::overlay_changed(QRect rect)
 {
 	reload_bits();
-	repaint((int)(rect.left() * zoom * pixelsize.high),
-			(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
-			(int)ceil(rect.width() * zoom * pixelsize.high),
-			(int)ceil(rect.height() * zoom * pixelsize.low));
+	repaint_pixmap();
+	//repaint_pixmap((int)(rect.left() * zoom * pixelsize.high),
+	//		(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
+	//		(int)ceil(rect.width() * zoom * pixelsize.high),
+	//		(int)ceil(rect.height() * zoom * pixelsize.low));
 }
 
 void ImageViewerWidget::update()
@@ -320,10 +334,11 @@ void ImageViewerWidget::update(QRect rect)
 	}
 
 	reload_bits();
-	repaint((int)(rect.left() * zoom * pixelsize.high),
-			(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
-			(int)ceil(rect.width() * zoom * pixelsize.high),
-			(int)ceil(rect.height() * zoom * pixelsize.low));
+	//repaint_pixmap((int)(rect.left() * zoom * pixelsize.high),
+	//		(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
+	//		(int)ceil(rect.width() * zoom * pixelsize.high),
+	//		(int)ceil(rect.height() * zoom * pixelsize.low));
+	repaint_pixmap();
 }
 
 void ImageViewerWidget::init(SlicesHandler* hand3D, bool bmporwork1)
@@ -358,7 +373,7 @@ void ImageViewerWidget::init(SlicesHandler* hand3D, bool bmporwork1)
 		if (bmporwork)
 			workborder_changed();
 		else
-			repaint();
+			repaint_pixmap();
 	}
 	show();
 }
@@ -498,22 +513,23 @@ void ImageViewerWidget::reload_bits()
 void ImageViewerWidget::tissue_changed()
 {
 	reload_bits();
-	repaint();
+	repaint_pixmap();
 }
 
 void ImageViewerWidget::tissue_changed(QRect rect)
 {
 	reload_bits();
-	repaint((int)(rect.left() * zoom * pixelsize.high),
-			(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
-			(int)ceil(rect.width() * zoom * pixelsize.high),
-			(int)ceil(rect.height() * zoom * pixelsize.low));
+	//repaint_pixmap((int)(rect.left() * zoom * pixelsize.high),
+	//		(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
+	//		(int)ceil(rect.width() * zoom * pixelsize.high),
+	//		(int)ceil(rect.height() * zoom * pixelsize.low));
+	repaint_pixmap();
 }
 
 void ImageViewerWidget::mark_changed()
 {
 	marks = bmphand->return_marks();
-	repaint();
+	repaint_pixmap();
 }
 
 bool ImageViewerWidget::toggle_tissuevisible()
@@ -533,7 +549,7 @@ bool ImageViewerWidget::toggle_picturevisible()
 bool ImageViewerWidget::toggle_markvisible()
 {
 	markvisible = !markvisible;
-	repaint();
+	repaint_pixmap();
 	return markvisible;
 }
 
@@ -559,7 +575,7 @@ void ImageViewerWidget::set_picturevisible(bool on)
 void ImageViewerWidget::set_markvisible(bool on)
 {
 	markvisible = on;
-	repaint();
+	repaint_pixmap();
 }
 
 void ImageViewerWidget::set_overlayvisible(bool on)
@@ -763,7 +779,7 @@ void ImageViewerWidget::set_brightnesscontrast(float bright, float contr, bool p
 	if (paint)
 	{
 		reload_bits();
-		repaint();
+		repaint_pixmap();
 	}
 }
 
@@ -944,7 +960,7 @@ void ImageViewerWidget::vp_changed()
 {
 	vp_to_image_decorator();
 
-	repaint();
+	repaint_pixmap();
 
 	vp_old = vp;
 	vp1_old = vp1;
@@ -963,10 +979,11 @@ void ImageViewerWidget::vp_changed(QRect rect)
 		rect.setRight(rect.right() + 1);
 	if (rect.bottom() + 1 < height)
 		rect.setBottom(rect.bottom() + 1);
-	repaint((int)(rect.left() * zoom * pixelsize.high),
-			(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
-			(int)ceil(rect.width() * zoom * pixelsize.high),
-			(int)ceil(rect.height() * zoom * pixelsize.low));
+	//repaint_pixmap((int)(rect.left() * zoom * pixelsize.high),
+	//		(int)((height - 1 - rect.bottom()) * zoom * pixelsize.low),
+	//		(int)ceil(rect.width() * zoom * pixelsize.high),
+	//		(int)ceil(rect.height() * zoom * pixelsize.low));
+	repaint_pixmap();
 
 	vp_old = vp;
 	vp1_old = vp1;
@@ -1024,7 +1041,7 @@ void ImageViewerWidget::vp1dyn_changed()
 		image_decorated.setPixel(int(m.p.px), int(height - m.p.py - 1), qRgb(r, g, b));
 	}
 
-	repaint();
+	repaint_pixmap();
 
 	vpdyn_old = vpdyn;
 	vp_old = vp;
@@ -1034,7 +1051,7 @@ void ImageViewerWidget::vp1dyn_changed()
 
 void ImageViewerWidget::vpdyn_changed()
 {
-	repaint();
+	repaint_pixmap();
 }
 
 void ImageViewerWidget::set_workbordervisible(bool on)
@@ -1054,7 +1071,7 @@ void ImageViewerWidget::set_workbordervisible(bool on)
 			vp.clear();
 			workborder = false;
 			reload_bits();
-			repaint();
+			repaint_pixmap();
 		}
 	}
 }
@@ -1068,7 +1085,7 @@ bool ImageViewerWidget::toggle_workbordervisible()
 			vp.clear();
 			workborder = false;
 			reload_bits();
-			repaint();
+			repaint_pixmap();
 		}
 	}
 	else
@@ -1140,7 +1157,7 @@ void ImageViewerWidget::crosshairx_changed(int i)
 		if (crosshairxvisible)
 		{
 			reload_bits();
-			repaint();
+			repaint_pixmap();
 		}
 	}
 }
@@ -1154,7 +1171,7 @@ void ImageViewerWidget::crosshairy_changed(int i)
 		if (crosshairyvisible)
 		{
 			reload_bits();
-			repaint();
+			repaint_pixmap();
 		}
 	}
 }
@@ -1165,7 +1182,7 @@ void ImageViewerWidget::set_crosshairxvisible(bool on)
 	{
 		crosshairxvisible = on;
 		reload_bits();
-		repaint();
+		repaint_pixmap();
 	}
 }
 
@@ -1175,6 +1192,6 @@ void ImageViewerWidget::set_crosshairyvisible(bool on)
 	{
 		crosshairyvisible = on;
 		reload_bits();
-		repaint();
+		repaint_pixmap();
 	}
 }
