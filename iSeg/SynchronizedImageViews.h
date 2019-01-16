@@ -31,10 +31,10 @@ private:
 	int _panStartX, _panStartY;
 };
 
-class Widget : public QWidget
+class SynchronizedImageViews : public QWidget
 {
 public:
-	Widget(QWidget *parent = 0);
+	SynchronizedImageViews(QWidget *parent = 0);
 
 	QGraphicsScene* scene1() { return view1->scene(); }
 	QGraphicsScene* scene2() { return view2->scene(); }
@@ -42,4 +42,31 @@ public:
 private:
 	QGraphicsView *view1;
 	QGraphicsView *view2;
+};
+
+class ImageViewer : public QWidget
+{
+	Q_OBJECT
+public:
+	ImageViewer(QWidget* parent = 0);
+
+	QImage _image;
+
+protected:
+	virtual void paintEvent(QPaintEvent *event) override;
+	virtual void wheelEvent(QWheelEvent *event) override;
+	virtual void mouseMoveEvent(QMouseEvent *event) override;
+	virtual void mousePressEvent(QMouseEvent *event) override;
+	virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+	QPoint mapToScene(QPoint x);
+	QPoint mapFromScene(QPoint x);
+
+private:
+	QPoint _anchor;
+	QPoint _shift;
+	double _scale = 1.0;
+
+	bool _pan = false;
+	int _panStartX, _panStartY;
 };

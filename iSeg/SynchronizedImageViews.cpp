@@ -82,7 +82,7 @@ void CustomGraphicsView::mouseMoveEvent(QMouseEvent *event)
 	//QGraphicsView::mouseMoveEvent(event);
 }
 
-Widget::Widget(QWidget *parent /*= 0*/) : QWidget(parent)
+SynchronizedImageViews::SynchronizedImageViews(QWidget *parent /*= 0*/) : QWidget(parent)
 {
 	view1 = new CustomGraphicsView(new QGraphicsScene);
 	view2 = new CustomGraphicsView(new QGraphicsScene);
@@ -111,3 +111,99 @@ Widget::Widget(QWidget *parent /*= 0*/) : QWidget(parent)
 	//connect(view1, SIGNAL(scaleChanged(QTransform)), view2, SLOT(setScale(QTransform)));
 	//connect(view2, SIGNAL(scaleChanged(QTransform)), view1, SLOT(setScale(QTransform)));
 }
+
+
+ImageViewer::ImageViewer(QWidget* parent /*= 0*/) : QWidget(parent)
+{
+	_anchor = QPoint(0, 0);
+}
+
+QPoint ImageViewer::mapToScene(QPoint x)
+{
+	return (x - _shift) / _scale + _anchor;
+}
+
+QPoint ImageViewer::mapFromScene(QPoint x)
+{
+	return (x - _anchor) * _scale + _shift;
+}
+
+void ImageViewer::paintEvent(QPaintEvent *event)
+{
+	QTransform tr;
+	tr.translate(-_anchor.x(), -_anchor.y());
+	tr.scale(_scale, _scale);
+	
+
+	QPainter painter(this);
+	painter.fillRect(event->rect(), Qt::black);
+	//painter.setClipRect(e->rect());
+	//painter.scale(zoom * pixelsize.high, zoom * pixelsize.low);
+	painter.setTransform(tr);
+	painter.drawImage(_shift.x(), _shift.y(), _image);
+	//painter.setPen(QPen(actual_color));
+}
+
+void ImageViewer::wheelEvent(QWheelEvent *event)
+{
+	//_anchor = mapToScene(event->pos());
+	auto p0scene = mapToScene(event->pos());
+	//_anchor = p0scene;
+	if (event->delta() > 0) {
+		//zoom = transform().m11() * scaleFactor;
+		//scale(scaleFactor, scaleFactor);
+		_scale *= 1.2;
+	}
+	else {
+		//zoom = transform().m11() / scaleFactor;
+		//scale(1 / scaleFactor, 1 / scaleFactor);
+		_scale /= 1.2;
+	}
+
+	auto p1mouse = mapFromScene(p0scene);
+	auto move = p1mouse - event->pos(); // The move
+
+	_shift += move;
+	repaint();
+}
+
+void ImageViewer::mousePressEvent(QMouseEvent *event)
+{
+	if (event->button() == Qt::RightButton)
+	{
+		_pan = true;
+		_panStartX = event->x();
+		_panStartY = event->y();
+		setCursor(Qt::CrossCursor);
+		event->accept();
+		return;
+	}
+	event->ignore(); //?
+}
+
+void ImageViewer::mouseMoveEvent(QMouseEvent *event)
+{
+	if (_pan)
+	{
+		_shift += QPoint(event->x() - _panStartX, event->y() - _panStartY);
+		_panStartX = event->x();
+		_panStartY = event->y();
+		repaint();
+		event->accept();
+		return;
+	}
+	event->ignore(); //?
+}
+
+void ImageViewer::mouseReleaseEvent(QMouseEvent *event)
+{
+	if (event->button() == Qt::RightButton)
+	{
+		_pan = false;
+		setCursor(Qt::ArrowCursor);
+		event->accept();
+		return;
+	}
+	event->ignore(); //?
+}
+

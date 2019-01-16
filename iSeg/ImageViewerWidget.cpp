@@ -404,6 +404,8 @@ void ImageViewerWidget::update_range(unsigned short slicenr)
 	}
 }
 
+// \note this is called to regenerate static data
+// \warning (why are) vpdyn and marks are added on top of image_decorated in paintEvent (repaint_pixmap)
 void ImageViewerWidget::reload_bits()
 {
 	auto color_lut = handler3D->GetColorLookupTable();
@@ -450,7 +452,7 @@ void ImageViewerWidget::reload_bits()
 			{
 				// blend with tissue color
 				auto rgbo = TissueInfos::GetTissueColor(tissue1[pos]);
-				float alpha = 0.5f;
+				float alpha = 0.5f; // \todo use alpha from tissue, i.e. rgbo[3]?
 				r = static_cast<unsigned char>(r + alpha * (255.0f * rgbo[0] - r));
 				g = static_cast<unsigned char>(g + alpha * (255.0f * rgbo[1] - g));
 				b = static_cast<unsigned char>(b + alpha * (255.0f * rgbo[2] - b));
