@@ -4,37 +4,46 @@
 CustomGraphicsView::CustomGraphicsView(QGraphicsScene* scene, QWidget *parent)
 	: QGraphicsView(scene, parent)
 {
+	//setSceneRect(INT_MIN / 2, INT_MIN / 2, INT_MAX, INT_MAX);
+
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	setMouseTracking(true);
 }
 
-void CustomGraphicsView::setScale(QTransform tr)
+void CustomGraphicsView::setScale(double s)
 {
-	setTransform(tr);
+	scale(s, s);
+}
+
+void CustomGraphicsView::setMove(QPoint move)
+{
+	horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
+	verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
 }
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 {
 	auto p0scene = mapToScene(event->pos());
 
+	//auto oldAnchor = transformationAnchor();
 	//setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-	if (event->delta() > 0) {
-		//zoom = transform().m11() * scaleFactor;
-		scale(scaleFactor, scaleFactor);
-	}
-	else {
-		//zoom = transform().m11() / scaleFactor;
-		scale(1 / scaleFactor, 1 / scaleFactor);
-	}
+	double s = (event->delta() > 0) ? scaleFactor : 1/scaleFactor;
+	scale(s, s);
 
 	auto p1mouse = mapFromScene(p0scene);
 	auto move = p1mouse - event->pos(); // The move
 
-	//scaleChanged(transform()); // \todo set scrollbar values via signal?
+	scaleChanged(s);
 
 	horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
 	verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
+	moveChanged(move);
+
 	//event->accept();
+
+	//setTransformationAnchor(oldAnchor);
 }
 
 void CustomGraphicsView::mousePressEvent(QMouseEvent *event)
@@ -71,10 +80,11 @@ void CustomGraphicsView::mouseMoveEvent(QMouseEvent *event)
 	{
 		// \todo set and trigger signal for external viewer to synchronize ?
 		// --> happens below in Widget
-		horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (event->x() - _panStartX));
-		verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _panStartY));
-		_panStartX = event->x();
-		_panStartY = event->y();
+		auto move = _panStart - event->pos(); // The move
+		horizontalScrollBar()->setValue(horizontalScrollBar()->value() + move.x());
+		verticalScrollBar()->setValue(verticalScrollBar()->value() + move.y());
+		moveChanged(move);
+		_panStart = event->pos();
 		event->accept();
 		return;
 	}
@@ -99,33 +109,42 @@ SynchronizedImageViews::SynchronizedImageViews(QWidget *parent /*= 0*/) : QWidge
 	hbar2->setRange(view1->horizontalScrollBar()->minimum(), view1->horizontalScrollBar()->maximum());
 	vbar2->setRange(view1->verticalScrollBar()->minimum(), view1->verticalScrollBar()->maximum());
 
-	connect(view1->horizontalScrollBar(), SIGNAL(valueChanged(int)), view2->horizontalScrollBar(), SLOT(setValue(int)));
-	connect(view2->horizontalScrollBar(), SIGNAL(valueChanged(int)), view1->horizontalScrollBar(), SLOT(setValue(int)));
+	connect(view1, SIGNAL(scaleChanged(double)), view2, SLOT(setScale(double)));
+	connect(view2, SIGNAL(scaleChanged(double)), view1, SLOT(setScale(double)));
 
-	connect(view1->verticalScrollBar(), SIGNAL(valueChanged(int)), view2->verticalScrollBar(), SLOT(setValue(int)));
-	connect(view2->verticalScrollBar(), SIGNAL(valueChanged(int)), view1->verticalScrollBar(), SLOT(setValue(int)));
+	connect(view1, SIGNAL(moveChanged(QPoint)), view2, SLOT(setMove(QPoint)));
+	connect(view2, SIGNAL(moveChanged(QPoint)), view1, SLOT(setMove(QPoint)));
+
+	//connect(view1->horizontalScrollBar(), SIGNAL(valueChanged(int)), view2->horizontalScrollBar(), SLOT(setValue(int)));
+	//connect(view2->horizontalScrollBar(), SIGNAL(valueChanged(int)), view1->horizontalScrollBar(), SLOT(setValue(int)));
+
+	//connect(view1->verticalScrollBar(), SIGNAL(valueChanged(int)), view2->verticalScrollBar(), SLOT(setValue(int)));
+	//connect(view2->verticalScrollBar(), SIGNAL(valueChanged(int)), view1->verticalScrollBar(), SLOT(setValue(int)));
 
 	connect(view1->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), view2->horizontalScrollBar(), SLOT(setRange(int, int)));
-
-	// \bug this signal-slot connection seems to break zooming -> anchor ?
-	//connect(view1, SIGNAL(scaleChanged(QTransform)), view2, SLOT(setScale(QTransform)));
-	//connect(view2, SIGNAL(scaleChanged(QTransform)), view1, SLOT(setScale(QTransform)));
 }
 
 
 ImageViewer::ImageViewer(QWidget* parent /*= 0*/) : QWidget(parent)
 {
+	_spacing[0] = _spacing[1] = 1.f;
 	_anchor = QPoint(0, 0);
 }
 
 QPoint ImageViewer::mapToScene(QPoint x)
 {
-	return (x - _shift) / _scale + _anchor;
+	QPoint s;
+	s.setX(x.x() / (_scale * _spacing[0]));
+	s.setY(_image.height() - 1 - x.y() / (_scale * _spacing[1]));
+	return s;
 }
 
-QPoint ImageViewer::mapFromScene(QPoint x)
+QPoint ImageViewer::mapFromScene(QPoint s)
 {
-	return (x - _anchor) * _scale + _shift;
+	QPoint x;
+	x.setX(s.x() * (_scale * _spacing[0]));
+	x.setY((_image.height() - 1 - s.y()) * (_scale * _spacing[1]));
+	return s;
 }
 
 void ImageViewer::paintEvent(QPaintEvent *event)
@@ -134,7 +153,6 @@ void ImageViewer::paintEvent(QPaintEvent *event)
 	tr.translate(-_anchor.x(), -_anchor.y());
 	tr.scale(_scale, _scale);
 	
-
 	QPainter painter(this);
 	painter.fillRect(event->rect(), Qt::black);
 	//painter.setClipRect(e->rect());

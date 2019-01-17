@@ -17,10 +17,12 @@ protected:
 	virtual void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
-	void setScale(QTransform tr);
+	void setScale(double s);
+	void setMove(QPoint p);
 
 signals:
-	void scaleChanged(QTransform tr);
+	void scaleChanged(double s);
+	void moveChanged(QPoint p);
 
 private:
 	//double zoom = 1.0;
@@ -65,8 +67,9 @@ protected:
 private:
 	QPoint _anchor;
 	QPoint _shift;
-	double _scale = 1.0;
+	float _scale = 1.f;
+	float _spacing[2];
 
 	bool _pan = false;
-	int _panStartX, _panStartY;
+	QPoint _panStart;
 };
