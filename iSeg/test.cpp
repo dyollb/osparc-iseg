@@ -11,9 +11,5 @@ int main( int argc, char **argv )
 	//view.scene2()->addPixmap(QPixmap("E:/VKF/0795.png"));
 	view.show();
 
-	//ImageViewer view;
-	//view._image.load("E:/VKF/0606.png");
-	//view.show();
-
 	return app.exec(); 
 }

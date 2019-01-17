@@ -30,7 +30,7 @@ private:
 	const double scaleFactor = 1.2;
 
 	bool _pan = false;
-	int _panStartX, _panStartY;
+	QPoint _panStart;
 };
 
 class SynchronizedImageViews : public QWidget
@@ -44,32 +44,4 @@ public:
 private:
 	QGraphicsView *view1;
 	QGraphicsView *view2;
-};
-
-class ImageViewer : public QWidget
-{
-	Q_OBJECT
-public:
-	ImageViewer(QWidget* parent = 0);
-
-	QImage _image;
-
-protected:
-	virtual void paintEvent(QPaintEvent *event) override;
-	virtual void wheelEvent(QWheelEvent *event) override;
-	virtual void mouseMoveEvent(QMouseEvent *event) override;
-	virtual void mousePressEvent(QMouseEvent *event) override;
-	virtual void mouseReleaseEvent(QMouseEvent *event) override;
-
-	QPoint mapToScene(QPoint x);
-	QPoint mapFromScene(QPoint x);
-
-private:
-	QPoint _anchor;
-	QPoint _shift;
-	float _scale = 1.f;
-	float _spacing[2];
-
-	bool _pan = false;
-	QPoint _panStart;
 };
