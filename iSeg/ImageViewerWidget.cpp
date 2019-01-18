@@ -138,6 +138,7 @@ void ImageViewerWidget::set_zoom(double z)
 {
 	if (z != zoom)
 	{
+		/*
 		//QPoint oldCenter = visibleRegion().boundingRect().center();
 		QPoint oldCenter = rect().center();
 		QPoint newCenter;
@@ -156,8 +157,9 @@ void ImageViewerWidget::set_zoom(double z)
 		setFixedSize(w, h);
 		if (mousePosZoom.x() != 0 && mousePosZoom.y() != 0)
 		{
-			emit setcenter_sign(newCenter.x(), newCenter.y());
+			//emit setcenter_sign(newCenter.x(), newCenter.y());
 		}
+		*/
 	}
 }
 
@@ -878,9 +880,7 @@ void ImageViewerWidget::wheelEvent(QWheelEvent* e)
 
 	if (e->state() & Qt::ControlModifier)
 	{
-		mousePosZoom = e->pos();
-		emit mousePosZoom_sign(mousePosZoom);
-		emit wheelrotatedctrl_sign(delta);
+		//mousePosZoom = e->pos();
 	}
 	else
 	{

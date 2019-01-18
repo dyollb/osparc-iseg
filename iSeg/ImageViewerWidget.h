@@ -50,8 +50,7 @@ public:
 	bool return_workbordervisible();
 
 	void setIsBmp(bool isBmpOrNot) { isBmp = isBmpOrNot; }
-	void setMousePosZoom(QPoint point) { mousePosZoom = point; }
-
+	
 protected:
 	//void paintEvent(QPaintEvent* e);
 	void mousePressEvent(QMouseEvent* e);
@@ -82,11 +81,7 @@ signals:
 	void mousedoubleclick_sign(Point p);
 	void mousedoubleclickmid_sign(Point p);
 	void mousemoved_sign(Point p);
-	void wheelrotated_sign(int delta);
-	void wheelrotatedctrl_sign(int delta);
 	void scaleoffsetfactor_changed(float scaleoffset1, float scalefactor1, bool bmporwork1);
-	void setcenter_sign(int x, int y);
-	void mousePosZoom_sign(QPoint mousePosZoom);
 
 private:
 	void reload_bits();
@@ -134,7 +129,6 @@ private:
 	bool workborder;
 	bool workborderlimit;
 	bool isBmp;
-	QPoint mousePosZoom;
 	std::vector<Mark>* marks;
 	int eventx, eventy;
 	Q3Action* addmark;

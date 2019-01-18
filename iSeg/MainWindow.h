@@ -266,8 +266,6 @@ private:
 
 	QLabel* lb_source;
 	QLabel* lb_target;
-	Q3ScrollView* bmp_scroller;
-	Q3ScrollView* work_scroller;
 	bool tomove_scroller;
 	ZoomWidget* zoom_widget;
 	//	float thickness;
@@ -508,8 +506,6 @@ private slots:
 	void VV3Dbmp_closed();
 	void xshower_slicechanged();
 	void yshower_slicechanged();
-	void setBmpContentsPos(int x, int y);
-	void setWorkContentsPos(int x, int y);
 	void tissuenr_changed(int);
 	void tissue_selection_changed();
 	void tree_widget_doubleclicked(QTreeWidgetItem* item, int column);
@@ -549,8 +545,6 @@ private slots:
 	void pb_tab_pressed(int nr);
 	void bmpcrosshairvisible_changed();
 	void workcrosshairvisible_changed();
-	void wheelrotated(int delta);
-	void mousePosZoom_changed(const QPoint& point);
 
 	void handle_begin_datachange(iseg::DataSelection& dataSelection,
 			QWidget* sender = nullptr, bool beginUndo = true);

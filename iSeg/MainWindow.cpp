@@ -437,7 +437,6 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	bmp_show = new ImageViewerWidget(this);
 	lb_source = new QLabel("Source", this);
 	lb_target = new QLabel("Target", this);
-	bmp_scroller = new Q3ScrollView(this);
 	sl_contrastbmp = new QSlider(Qt::Horizontal, this);
 	sl_contrastbmp->setRange(0, 100);
 	sl_brightnessbmp = new QSlider(Qt::Horizontal, this);
@@ -462,7 +461,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	rect = fm.boundingRect(text);
 	le_brightnessbmp_val->setFixedSize(rect.width() + 4, rect.height() + 4);
 	lb_brightnessbmp_val = new QLabel("%", this);
-	bmp_scroller->addChild(bmp_show);
+
 	bmp_show->init(handler3D, TRUE);
 	bmp_show->set_workbordervisible(TRUE);
 	bmp_show->setIsBmp(true);
@@ -502,8 +501,6 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	rect = fm.boundingRect(text);
 	le_brightnesswork_val->setFixedSize(rect.width() + 4, rect.height() + 4);
 	lb_brightnesswork_val = new QLabel("%", this);
-	work_scroller = new Q3ScrollView(this);
-	work_scroller->addChild(work_show);
 
 	work_show->init(handler3D, FALSE);
 	work_show->set_tissuevisible(false); //toggle_tissuevisible();
@@ -788,7 +785,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	vboxbmp->setMargin(0);
 	vboxbmp->addWidget(lb_source);
 	vboxbmp->addWidget(hboxbmp1w);
-	vboxbmp->addWidget(bmp_scroller);
+	vboxbmp->addWidget(bmp_show);
 	vboxbmp->addWidget(hboxbmpw);
 	vboxbmpw->setLayout(vboxbmp);
 
@@ -827,7 +824,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	vboxwork->setMargin(0);
 	vboxwork->addWidget(lb_target);
 	vboxwork->addWidget(hboxwork1w);
-	vboxwork->addWidget(work_scroller);
+	vboxwork->addWidget(work_show);
 	vboxwork->addWidget(hboxworkw);
 	vboxworkw->setLayout(vboxwork);
 
@@ -1524,16 +1521,6 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 	QObject::connect(pb_subhold, SIGNAL(clicked()), this,
 			SLOT(subtracthold_tissue_pushed()));
 
-	QObject::connect(bmp_scroller, SIGNAL(contentsMoving(int, int)), this,
-			SLOT(setWorkContentsPos(int, int)));
-	QObject::connect(work_scroller, SIGNAL(contentsMoving(int, int)), this,
-			SLOT(setBmpContentsPos(int, int)));
-	QObject::connect(bmp_show, SIGNAL(setcenter_sign(int, int)), bmp_scroller,
-			SLOT(center(int, int)));
-	QObject::connect(work_show, SIGNAL(setcenter_sign(int, int)), work_scroller,
-			SLOT(center(int, int)));
-	tomove_scroller = true;
-
 	QObject::connect(zoom_widget, SIGNAL(set_zoom(double)), bmp_show,
 			SLOT(set_zoom(double)));
 	QObject::connect(zoom_widget, SIGNAL(set_zoom(double)), work_show,
@@ -1649,16 +1636,6 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 				SIGNAL(end_datachange(QWidget*, iseg::EndUndoAction)), this,
 				SLOT(handle_end_datachange(QWidget*, iseg::EndUndoAction)));
 	}
-
-	QObject::connect(bmp_show, SIGNAL(mousePosZoom_sign(QPoint)), this,
-			SLOT(mousePosZoom_changed(const QPoint&)));
-	QObject::connect(work_show, SIGNAL(mousePosZoom_sign(QPoint)), this,
-			SLOT(mousePosZoom_changed(const QPoint&)));
-
-	QObject::connect(bmp_show, SIGNAL(wheelrotatedctrl_sign(int)), this,
-			SLOT(wheelrotated(int)));
-	QObject::connect(work_show, SIGNAL(wheelrotatedctrl_sign(int)), this,
-			SLOT(wheelrotated(int)));
 
 	//	QObject::connect(pb_work2tissue,SIGNAL(clicked()),this,SLOT(do_work2tissue()));
 
@@ -4561,32 +4538,6 @@ void MainWindow::yshower_slicechanged()
 	work_show->crosshairx_changed(ysliceshower->get_slicenr());
 }
 
-void MainWindow::setWorkContentsPos(int x, int y)
-{
-	if (tomove_scroller)
-	{
-		tomove_scroller = false;
-		work_scroller->setContentsPos(x, y);
-	}
-	else
-	{
-		tomove_scroller = true;
-	}
-}
-
-void MainWindow::setBmpContentsPos(int x, int y)
-{
-	if (tomove_scroller)
-	{
-		tomove_scroller = false;
-		bmp_scroller->setContentsPos(x, y);
-	}
-	else
-	{
-		tomove_scroller = true;
-	}
-}
-
 void MainWindow::execute_histo()
 {
 	iseg::DataSelection dataSelection;
@@ -4619,8 +4570,6 @@ void MainWindow::execute_scale()
 	QObject::disconnect(
 			&SW, SIGNAL(end_datachange(QWidget*, iseg::EndUndoAction)), this,
 			SLOT(handle_end_datachange(QWidget*, iseg::EndUndoAction)));
-
-	return;
 }
 
 void MainWindow::execute_imagemath()
@@ -4642,8 +4591,6 @@ void MainWindow::execute_imagemath()
 	QObject::disconnect(
 			&IM, SIGNAL(end_datachange(QWidget*, iseg::EndUndoAction)), this,
 			SLOT(handle_end_datachange(QWidget*, iseg::EndUndoAction)));
-
-	return;
 }
 
 void MainWindow::execute_unwrap()
@@ -4656,7 +4603,6 @@ void MainWindow::execute_unwrap()
 	handler3D->unwrap(0.90f);
 
 	emit end_datachange(this);
-	return;
 }
 
 void MainWindow::execute_overlay()
@@ -7424,18 +7370,6 @@ void MainWindow::execute_cleanup()
 
 		emit end_datachange(this);
 	}
-}
-
-void MainWindow::wheelrotated(int delta)
-{
-	zoom_widget->zoom_changed(work_show->return_zoom() * pow(1.2, delta / 120.0));
-}
-
-void MainWindow::mousePosZoom_changed(const QPoint& point)
-{
-	bmp_show->setMousePosZoom(point);
-	work_show->setMousePosZoom(point);
-	//mousePosZoom = point;
 }
 
 FILE* MainWindow::save_notes(FILE* fp, unsigned short version)
