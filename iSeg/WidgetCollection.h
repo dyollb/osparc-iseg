@@ -671,7 +671,6 @@ signals:
 	void set_zoom(double);
 
 private slots:
-	//	void zoom_changed(double);
 	void zoomin_pushed();
 	void zoomout_pushed();
 	void unzoom_pushed();

@@ -6321,16 +6321,11 @@ void MainWindow::slices3d_changed(bool new_bitstack)
 
 void MainWindow::zoom_in()
 {
-	//	bmp_show->set_zoom(bmp_show->return_zoom()*2);
-	//	work_show->set_zoom(work_show->return_zoom()*2);
 	zoom_widget->zoom_changed(work_show->return_zoom() * 2);
 }
 
 void MainWindow::zoom_out()
 {
-	//	bmp_show->set_zoom(bmp_show->return_zoom()/2);
-	//	work_show->set_zoom(work_show->return_zoom()/2);
-	//	zoom_widget->set_zoom(work_show->return_zoom());
 	zoom_widget->zoom_changed(work_show->return_zoom() / 2);
 }
 
