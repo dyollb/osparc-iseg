@@ -10,8 +10,10 @@ class CustomGraphicsView : public QGraphicsView
 public:
 	CustomGraphicsView(QGraphicsScene* scene, QWidget* parent = 0);
 
-	void zoomIn() { centerOn(viewport()->rect().center()); scale(scaleFactor, scaleFactor); }
-	void zoomOut() { centerOn(viewport()->rect().center()); scale(1.f/scaleFactor, 1.f/scaleFactor); }
+	const float scaleFactor = 1.2f;
+
+	void zoom_in() { centerOn(viewport()->rect().center()); scale(scaleFactor, scaleFactor); }
+	void zoom_out() { centerOn(viewport()->rect().center()); scale(1.f/scaleFactor, 1.f/scaleFactor); }
 
 protected:
 	virtual void wheelEvent(QWheelEvent *event);
@@ -20,18 +22,14 @@ protected:
 	virtual void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
-	void setScale(float s);
-	void setMove(QPoint p);
+	void scale_by_factor(float s);
+	void set_shift(QPoint p);
 
 signals:
-	void scaleChanged(float s);
-	void moveChanged(QPoint p);
+	void scale_factor_changed(float s);
+	void shift_changed(QPoint p);
 
 private:
-	//double zoom = 1.0;
-
-	const float scaleFactor = 1.2f;
-
 	bool _pan = false;
 	QPoint _panStart;
 };
