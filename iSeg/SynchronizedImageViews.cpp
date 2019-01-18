@@ -1,18 +1,17 @@
 #include "SynchronizedImageViews.h"
 
+#include <cmath>
 
 CustomGraphicsView::CustomGraphicsView(QGraphicsScene* scene, QWidget *parent)
 	: QGraphicsView(scene, parent)
 {
-	//setSceneRect(INT_MIN / 2, INT_MIN / 2, INT_MAX, INT_MAX);
-
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	setMouseTracking(true);
 }
 
-void CustomGraphicsView::setScale(double s)
+void CustomGraphicsView::setScale(float s)
 {
 	scale(s, s);
 }
@@ -27,23 +26,22 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 {
 	auto p0scene = mapToScene(event->pos());
 
-	//auto oldAnchor = transformationAnchor();
-	//setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-	double s = (event->delta() > 0) ? scaleFactor : 1/scaleFactor;
+	float s = (event->delta() > 0) ? scaleFactor : 1/scaleFactor;
+	//float s = std::pow(scaleFactor, event->delta() / 120.f);
 	scale(s, s);
 
 	auto p1mouse = mapFromScene(p0scene);
 	auto move = p1mouse - event->pos(); // The move
 
+	// trigger signal for external viewer to synchronize
 	scaleChanged(s);
 
 	horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
 	verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
+	// trigger signal for external viewer to synchronize
 	moveChanged(move);
 
-	//event->accept();
-
-	//setTransformationAnchor(oldAnchor);
+	event->accept(); //?
 }
 
 void CustomGraphicsView::mousePressEvent(QMouseEvent *event)
@@ -57,7 +55,6 @@ void CustomGraphicsView::mousePressEvent(QMouseEvent *event)
 		return;
 	}
 	event->ignore(); //?
-	//QGraphicsView::mousePressEvent(event);
 }
 
 void CustomGraphicsView::mouseReleaseEvent(QMouseEvent *event)
@@ -70,25 +67,23 @@ void CustomGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 		return;
 	}
 	event->ignore(); //?
-	//QGraphicsView::mouseReleaseEvent(event);
 }
 
 void CustomGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
 	if (_pan)
 	{
-		// \todo set and trigger signal for external viewer to synchronize ?
-		// --> happens below in Widget
 		auto move = _panStart - event->pos(); // The move
 		horizontalScrollBar()->setValue(horizontalScrollBar()->value() + move.x());
 		verticalScrollBar()->setValue(verticalScrollBar()->value() + move.y());
-		moveChanged(move);
+
+		// trigger signal for external viewer to synchronize
+		emit moveChanged(move);
 		_panStart = event->pos();
 		event->accept();
 		return;
 	}
 	event->ignore(); //?
-	//QGraphicsView::mouseMoveEvent(event);
 }
 
 SynchronizedImageViews::SynchronizedImageViews(QWidget *parent /*= 0*/) : QWidget(parent)
@@ -108,17 +103,11 @@ SynchronizedImageViews::SynchronizedImageViews(QWidget *parent /*= 0*/) : QWidge
 	hbar2->setRange(view1->horizontalScrollBar()->minimum(), view1->horizontalScrollBar()->maximum());
 	vbar2->setRange(view1->verticalScrollBar()->minimum(), view1->verticalScrollBar()->maximum());
 
-	connect(view1, SIGNAL(scaleChanged(double)), view2, SLOT(setScale(double)));
-	connect(view2, SIGNAL(scaleChanged(double)), view1, SLOT(setScale(double)));
+	connect(view1, SIGNAL(scaleChanged(float)), view2, SLOT(setScale(float)));
+	connect(view2, SIGNAL(scaleChanged(float)), view1, SLOT(setScale(float)));
 
 	connect(view1, SIGNAL(moveChanged(QPoint)), view2, SLOT(setMove(QPoint)));
 	connect(view2, SIGNAL(moveChanged(QPoint)), view1, SLOT(setMove(QPoint)));
 
-	//connect(view1->horizontalScrollBar(), SIGNAL(valueChanged(int)), view2->horizontalScrollBar(), SLOT(setValue(int)));
-	//connect(view2->horizontalScrollBar(), SIGNAL(valueChanged(int)), view1->horizontalScrollBar(), SLOT(setValue(int)));
-
-	//connect(view1->verticalScrollBar(), SIGNAL(valueChanged(int)), view2->verticalScrollBar(), SLOT(setValue(int)));
-	//connect(view2->verticalScrollBar(), SIGNAL(valueChanged(int)), view1->verticalScrollBar(), SLOT(setValue(int)));
-
-	connect(view1->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), view2->horizontalScrollBar(), SLOT(setRange(int, int)));
+	//connect(view1->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), view2->horizontalScrollBar(), SLOT(setRange(int, int)));
 }
