@@ -12,9 +12,6 @@ public:
 
 	const float scaleFactor = 1.2f;
 
-	void zoom_in() { centerOn(viewport()->rect().center()); scale(scaleFactor, scaleFactor); }
-	void zoom_out() { centerOn(viewport()->rect().center()); scale(1.f/scaleFactor, 1.f/scaleFactor); }
-
 protected:
 	virtual void wheelEvent(QWheelEvent *event);
 	virtual void mouseMoveEvent(QMouseEvent *event);
@@ -24,6 +21,8 @@ protected:
 public slots:
 	void scale_by_factor(float s);
 	void set_shift(QPoint p);
+	void zoom_in(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(factor, factor); }
+	void zoom_out(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(1.f/factor, 1.f/factor); }
 
 signals:
 	void scale_factor_changed(float s);

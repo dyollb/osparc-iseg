@@ -50,7 +50,7 @@ public:
 	bool return_workbordervisible();
 
 	void setIsBmp(bool isBmpOrNot) { isBmp = isBmpOrNot; }
-	
+
 protected:
 	//void paintEvent(QPaintEvent* e);
 	void mousePressEvent(QMouseEvent* e);
@@ -82,6 +82,8 @@ signals:
 	void mousedoubleclickmid_sign(Point p);
 	void mousemoved_sign(Point p);
 	void scaleoffsetfactor_changed(float scaleoffset1, float scalefactor1, bool bmporwork1);
+	void scale_factor_changed(float s);
+	void shift_changed(QPoint p);
 
 private:
 	void reload_bits();
@@ -101,7 +103,10 @@ private:
 	float contrast;
 	float scaleoffset;
 	float scalefactor;
+	const float scaleFactor = 1.2f;
 	double zoom;
+	bool _pan = false;
+	QPoint _panStart;
 	bool crosshairxvisible;
 	bool crosshairyvisible;
 	int crosshairxpos;
@@ -165,8 +170,11 @@ public slots:
 	void slicenr_changed();
 	void tissue_changed();
 	void tissue_changed(QRect rect);
-	void zoom_in();
-	void zoom_out();
+
+	void scale_by_factor(float s);
+	void set_shift(QPoint p);
+	void zoom_in(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(factor, factor); }
+	void zoom_out(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(1.f/factor, 1.f/factor); }
 	void unzoom();
 	double return_zoom();
 	void set_zoom(double z);

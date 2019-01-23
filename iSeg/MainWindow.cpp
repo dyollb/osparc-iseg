@@ -1410,6 +1410,9 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 			SLOT(mark_changed()));
 	QObject::connect(this, SIGNAL(tissues_changed()), this,
 			SLOT(update_tissue()));
+
+	QObject::connect(bmp_show, SIGNAL(scale_factor_changed(float)), work_show, SLOT(scale_by_factor(float)));
+	QObject::connect(bmp_show, SIGNAL(shift_changed(QPoint)), work_show, SLOT(set_shift(QPoint)));
 	QObject::connect(bmp_show, SIGNAL(addmark_sign(Point)), this,
 			SLOT(add_mark(Point)));
 	QObject::connect(bmp_show, SIGNAL(addlabel_sign(Point, std::string)), this,
@@ -1432,6 +1435,9 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring,
 			SLOT(select_tissue(Point, bool)));
 	QObject::connect(bmp_show, SIGNAL(viewtissue_sign(Point)), this,
 			SLOT(view_tissue(Point)));
+
+	QObject::connect(work_show, SIGNAL(scale_factor_changed(float)), bmp_show, SLOT(scale_by_factor(float)));
+	QObject::connect(work_show, SIGNAL(shift_changed(QPoint)), bmp_show, SLOT(set_shift(QPoint)));
 	QObject::connect(work_show, SIGNAL(addmark_sign(Point)), this,
 			SLOT(add_mark(Point)));
 	QObject::connect(work_show, SIGNAL(addlabel_sign(Point, std::string)), this,

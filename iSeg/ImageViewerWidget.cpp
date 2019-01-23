@@ -59,6 +59,8 @@ ImageViewerWidget::ImageViewerWidget(QWidget* parent)
 
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	// needed to zoom at anchor
+	setMouseTracking(true);
 
 	brightness = scaleoffset = 0.0f;
 	contrast = scalefactor = 1.0f;
@@ -732,10 +734,6 @@ void ImageViewerWidget::add_to_selected_tissues()
 	emit selecttissue_sign(p, false);
 }
 
-void ImageViewerWidget::zoom_in() { set_zoom(2 * zoom); }
-
-void ImageViewerWidget::zoom_out() { set_zoom(0.5 * zoom); }
-
 void ImageViewerWidget::unzoom() { set_zoom(1.0); }
 
 double ImageViewerWidget::return_zoom() { return zoom; }
@@ -816,6 +814,46 @@ void ImageViewerWidget::update_scaleoffsetfactor()
 	emit scaleoffsetfactor_changed(scaleoffset, scalefactor, bmporwork);
 }
 
+void ImageViewerWidget::scale_by_factor(float s)
+{
+	scale(s, s);
+}
+
+void ImageViewerWidget::set_shift(QPoint move)
+{
+	horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
+	verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
+}
+
+void ImageViewerWidget::wheelEvent(QWheelEvent* event)
+{
+	if (event->state() & Qt::ControlModifier)
+	{
+		auto p0scene = mapToScene(event->pos());
+
+		float s = (event->delta() > 0) ? scaleFactor : 1/scaleFactor;
+		//float s = std::pow(scaleFactor, event->delta() / 120.f);
+		scale(s, s);
+
+		auto p1mouse = mapFromScene(p0scene);
+		auto move = p1mouse - event->pos(); // The move
+
+		// trigger signal for external viewer to synchronize
+		scale_factor_changed(s);
+
+		horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
+		verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
+		// trigger signal for external viewer to synchronize
+		shift_changed(move);
+
+		event->accept(); //?
+	}
+	else
+	{
+		event->ignore();
+	}
+}
+
 void ImageViewerWidget::mousePressEvent(QMouseEvent* e)
 {
 	Point p;
@@ -829,6 +867,15 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent* e)
 
 	if (e->button() == Qt::LeftButton)
 	{
+		if (e->state() & Qt::ControlModifier)
+		{
+			_pan = true;
+			_panStart = e->pos();
+			setCursor(Qt::ClosedHandCursor);
+			e->accept();
+			return;
+		}
+
 		emit mousepressed_sign(p);
 	}
 	else if (e->button() == Qt::MidButton)
@@ -841,6 +888,14 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent* e)
 {
 	if (e->button() == Qt::LeftButton)
 	{
+		if (e->state() & Qt::ControlModifier)
+		{
+			_pan = false;
+			setCursor(Qt::ArrowCursor);
+			e->accept();
+			return;
+		}
+
 		Point p;
 		p.px = (unsigned short)max(min(width - 1.0, (e->x() / (zoom * pixelsize.high))), 0.0);
 		p.py = (unsigned short)max(min(height - 1.0, height - ((e->y() + 1) / (zoom * pixelsize.low))), 0.0);
@@ -867,25 +922,23 @@ void ImageViewerWidget::mouseDoubleClickEvent(QMouseEvent* e)
 
 void ImageViewerWidget::mouseMoveEvent(QMouseEvent* e)
 {
+	if (e->state() & Qt::ControlModifier && _pan)
+	{
+		auto move = _panStart - e->pos(); // The move
+		horizontalScrollBar()->setValue(horizontalScrollBar()->value() + move.x());
+		verticalScrollBar()->setValue(verticalScrollBar()->value() + move.y());
+
+		// trigger signal for external viewer to synchronize
+		emit shift_changed(move);
+		_panStart = e->pos();
+		e->accept();
+		return;
+	}
 	Point p;
 	p.px = (unsigned short)max(min(width - 1.0, (e->x() / (zoom * pixelsize.high))), 0.0);
 	p.py = (unsigned short)max(min(height - 1.0, height - ((e->y() + 1) / (zoom * pixelsize.low))), 0.0);
 
 	emit mousemoved_sign(p);
-}
-
-void ImageViewerWidget::wheelEvent(QWheelEvent* e)
-{
-	int delta = e->delta();
-
-	if (e->state() & Qt::ControlModifier)
-	{
-		//mousePosZoom = e->pos();
-	}
-	else
-	{
-		e->ignore();
-	}
 }
 
 void ImageViewerWidget::recompute_workborder()
