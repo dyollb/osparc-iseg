@@ -1853,7 +1853,7 @@ void ZoomWidget::LeZoomChanged()
 	}
 	else
 	{
-		if (m_LeZoomF->text() != QString("."))
+		if (m_LeZoomF->text() != ".")
 		{
 			QApplication::beep();
 		}

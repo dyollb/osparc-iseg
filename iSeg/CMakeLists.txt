@@ -228,3 +228,14 @@ IF(APPLE)
 
 	INSTALL_BUNDLE()
 ENDIF()
+
+
+set(MY_EXTERNAL_LINK_LIBRARIES)
+use_qt4()
+
+QT4_WRAP_CPP(MOCS SynchronizedImageViews.h)
+add_executable(test-SynchronizedImageViews test.cpp SynchronizedImageViews.cpp ${MOCS})
+target_compile_definitions(test-SynchronizedImageViews PRIVATE ${ISEG_DEFINITIONS})
+target_link_libraries(test-SynchronizedImageViews
+	${MY_EXTERNAL_LINK_LIBRARIES}
+)

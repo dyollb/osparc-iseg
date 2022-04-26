@@ -478,7 +478,6 @@ signals:
 	void SetZoom(double);
 
 private slots:
-	//	void zoom_changed(double);
 	void ZoominPushed();
 	void ZoomoutPushed();
 	void UnzoomPushed();
