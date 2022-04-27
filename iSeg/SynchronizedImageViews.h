@@ -19,18 +19,16 @@ protected:
 	virtual void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
-	void scale_by_factor(float s);
-	void set_shift(QPoint p);
-	void zoom_in(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(factor, factor); }
-	void zoom_out(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(1.f/factor, 1.f/factor); }
+	void OnZoomChanged(float s, QPoint move);
+	void ZoomIn(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(factor, factor); }
+	void ZoomOut(float factor=1.2f) { centerOn(viewport()->rect().center()); scale(1.f/factor, 1.f/factor); }
 
 signals:
-	void scale_factor_changed(float s);
-	void shift_changed(QPoint p);
+	void ZoomChanged(float s, QPoint m);
 
 private:
-	bool _pan = false;
-	QPoint _panStart;
+	bool m_Pan = false;
+	QPoint m_PanStart;
 };
 
 class SynchronizedImageViews : public QWidget

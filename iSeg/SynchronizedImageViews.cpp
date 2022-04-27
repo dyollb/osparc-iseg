@@ -11,13 +11,9 @@ CustomGraphicsView::CustomGraphicsView(QGraphicsScene* scene, QWidget *parent)
 	setMouseTracking(true);
 }
 
-void CustomGraphicsView::scale_by_factor(float s)
+void CustomGraphicsView::OnZoomChanged(float s, QPoint move)
 {
 	scale(s, s);
-}
-
-void CustomGraphicsView::set_shift(QPoint move)
-{
 	horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
 	verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
 }
@@ -33,13 +29,11 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 	auto p1mouse = mapFromScene(p0scene);
 	auto move = p1mouse - event->pos(); // The move
 
-	// trigger signal for external viewer to synchronize
-	scale_factor_changed(s);
-
 	horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
 	verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
+
 	// trigger signal for external viewer to synchronize
-	shift_changed(move);
+	emit ZoomChanged(s, move);
 
 	event->accept(); //?
 }
@@ -48,8 +42,8 @@ void CustomGraphicsView::mousePressEvent(QMouseEvent *event)
 {
 	if (event->button() == Qt::RightButton)
 	{
-		_pan = true;
-		_panStart = event->pos();
+		m_Pan = true;
+		m_PanStart = event->pos();
 		setCursor(Qt::ClosedHandCursor);
 		event->accept();
 		return;
@@ -61,7 +55,7 @@ void CustomGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 {
 	if (event->button() == Qt::RightButton)
 	{
-		_pan = false;
+		m_Pan = false;
 		setCursor(Qt::ArrowCursor);
 		event->accept();
 		return;
@@ -71,15 +65,15 @@ void CustomGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 
 void CustomGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-	if (_pan)
+	if (m_Pan)
 	{
-		auto move = _panStart - event->pos(); // The move
+		auto move = m_PanStart - event->pos(); // The move
 		horizontalScrollBar()->setValue(horizontalScrollBar()->value() + move.x());
 		verticalScrollBar()->setValue(verticalScrollBar()->value() + move.y());
 
 		// trigger signal for external viewer to synchronize
-		emit shift_changed(move);
-		_panStart = event->pos();
+		emit ZoomChanged(1.f, move);
+		m_PanStart = event->pos();
 		event->accept();
 		return;
 	}
@@ -103,11 +97,8 @@ SynchronizedImageViews::SynchronizedImageViews(QWidget *parent /*= 0*/) : QWidge
 	hbar2->setRange(view1->horizontalScrollBar()->minimum(), view1->horizontalScrollBar()->maximum());
 	vbar2->setRange(view1->verticalScrollBar()->minimum(), view1->verticalScrollBar()->maximum());
 
-	connect(view1, SIGNAL(scale_factor_changed(float)), view2, SLOT(scale_by_factor(float)));
-	connect(view2, SIGNAL(scale_factor_changed(float)), view1, SLOT(scale_by_factor(float)));
-
-	connect(view1, SIGNAL(shift_changed(QPoint)), view2, SLOT(set_shift(QPoint)));
-	connect(view2, SIGNAL(shift_changed(QPoint)), view1, SLOT(set_shift(QPoint)));
+	connect(view1, SIGNAL(ZoomChanged(float,QPoint)), view2, SLOT(OnZoomChanged(float,QPoint)));
+	connect(view2, SIGNAL(ZoomChanged(float,QPoint)), view1, SLOT(OnZoomChanged(float,QPoint)));
 
 	connect(view1->horizontalScrollBar(), SIGNAL(sliderMoved(int)), view2->horizontalScrollBar(), SLOT(setValue(int)));
 	connect(view1->verticalScrollBar(), SIGNAL(sliderMoved(int)), view2->verticalScrollBar(), SLOT(setValue(int)));
