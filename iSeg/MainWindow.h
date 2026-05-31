@@ -503,8 +503,6 @@ private slots:
 	void YshowerSlicechanged();
 	void SetBmpContentsPos(int val);
 	void SetWorkContentsPos(int val);
-	void CenterBmpScroller(int x, int y);
-	void CenterWorkScroller(int x, int y);
 	void TissuenrChanged(int);
 	void TissueSelectionChanged();
 	void TreeWidgetDoubleclicked(QTreeWidgetItem* item, int column);

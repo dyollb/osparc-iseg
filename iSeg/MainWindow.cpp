@@ -1419,8 +1419,6 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	QObject_connect(m_BmpScroller->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetWorkContentsPos(int)));
 	QObject_connect(m_WorkScroller->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetBmpContentsPos(int)));
 	QObject_connect(m_WorkScroller->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetBmpContentsPos(int)));
-	QObject_connect(m_BmpShow, SIGNAL(SetcenterSign(int, int)), this, SLOT(CenterBmpScroller(int, int)));
-	QObject_connect(m_WorkShow, SIGNAL(SetcenterSign(int, int)), this, SLOT(CenterWorkScroller(int, int)));
 	m_TomoveScroller = true;
 
 	QObject_connect(m_ZoomWidget, SIGNAL(SetZoom(double)), m_BmpShow, SLOT(SetZoom(double)));
@@ -4167,16 +4165,6 @@ void MainWindow::SetBmpContentsPos(int /*val*/)
 	}
 }
 
-void MainWindow::CenterBmpScroller(int x, int y)
-{
-	m_BmpScroller->ensureVisible(x, y);
-}
-
-void MainWindow::CenterWorkScroller(int x, int y)
-{
-	m_WorkScroller->ensureVisible(x, y);
-}
-
 void MainWindow::ExecuteHisto()
 {
 	DataSelection data_selection;
@@ -6574,14 +6562,34 @@ void MainWindow::ExecuteCleanup()
 
 void MainWindow::Wheelrotated(int delta)
 {
-	m_ZoomWidget->ZoomChanged(m_WorkShow->ReturnZoom() * pow(1.2, delta / 120.0));
+	const double old_zoom = m_WorkShow->ReturnZoom();
+	const double new_zoom = old_zoom * pow(1.2, delta / 120.0);
+
+	// Content coordinates under the mouse cursor before zoom
+	const QPoint mouse_pos = m_BmpShow->GetMousePosZoom();
+	const int bmp_cx = m_BmpScroller->horizontalScrollBar()->value() + mouse_pos.x();
+	const int bmp_cy = m_BmpScroller->verticalScrollBar()->value() + mouse_pos.y();
+	const int work_cx = m_WorkScroller->horizontalScrollBar()->value() + mouse_pos.x();
+	const int work_cy = m_WorkScroller->verticalScrollBar()->value() + mouse_pos.y();
+
+	// Apply zoom (resizes both viewer widgets)
+	m_ZoomWidget->ZoomChanged(new_zoom);
+
+	// Scroll so the same image pixel stays under the cursor
+	const double ratio = new_zoom / old_zoom;
+
+	m_TomoveScroller = false;
+	m_BmpScroller->horizontalScrollBar()->setValue(static_cast<int>(bmp_cx * ratio - mouse_pos.x()));
+	m_BmpScroller->verticalScrollBar()->setValue(static_cast<int>(bmp_cy * ratio - mouse_pos.y()));
+	m_WorkScroller->horizontalScrollBar()->setValue(static_cast<int>(work_cx * ratio - mouse_pos.x()));
+	m_WorkScroller->verticalScrollBar()->setValue(static_cast<int>(work_cy * ratio - mouse_pos.y()));
+	m_TomoveScroller = true;
 }
 
 void MainWindow::MousePosZoomChanged(const QPoint& point)
 {
 	m_BmpShow->SetMousePosZoom(point);
 	m_WorkShow->SetMousePosZoom(point);
-	//mousePosZoom = point;
 }
 
 FILE* MainWindow::SaveNotes(FILE* fp, unsigned short version)
