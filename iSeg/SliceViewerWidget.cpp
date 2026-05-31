@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -59,7 +59,7 @@ Bmptissuesliceshower::Bmptissuesliceshower(SlicesHandler* hand3D, unsigned short
 	m_Scalefactorwork = 1.0f;
 	m_Scaleoffsetwork = 0.0f;
 
-	m_Image.create(int(m_Width), int(m_Height), 32);
+	m_Image = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
 
 	setFixedSize((int)(m_Width * m_D * m_Zoom), (int)(m_Height * m_Thickness * m_Zoom));
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -124,7 +124,7 @@ void Bmptissuesliceshower::update()
 	{
 		m_Width = w;
 		m_Height = h;
-		m_Image.create(int(w), int(h), 32);
+		m_Image = QImage(int(w), int(h), QImage::Format_RGB32);
 		setFixedSize((int)(w * m_D * m_Zoom), (int)(h * m_Thickness * m_Zoom));
 		free(m_Bmpbits);
 		free(m_Tissue);

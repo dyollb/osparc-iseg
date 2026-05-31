@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -11,18 +11,18 @@
 
 #include "AtlasViewer.h"
 
-#include <QCloseEvent>
-#include <QContextMenuEvent>
-#include <QMouseEvent>
-#include <QPaintEvent>
-#include <QWheelEvent>
 #include <QApplication>
+#include <QCloseEvent>
 #include <QColor>
+#include <QContextMenuEvent>
 #include <QEvent>
 #include <QImage>
 #include <QLineEdit>
+#include <QMouseEvent>
+#include <QPaintEvent>
 #include <QPainter>
 #include <QPen>
+#include <QWheelEvent>
 #include <QWidget>
 
 #include <algorithm>
@@ -140,7 +140,7 @@ void AtlasViewer::update(QRect rect)
 		delete[] m_CurrentTissue;
 		m_CurrentBmpbits = new float[m_Height * (unsigned)(m_Width)];
 		m_CurrentTissue = new tissues_size_t[m_Height * (unsigned)(m_Width)];
-		m_Image.create(int(m_Width), int(m_Height), 32);
+		m_Image = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
 		setFixedSize((int)m_Width * m_Zoom * m_Pixelsize.high, (int)m_Height * m_Zoom * m_Pixelsize.low);
 	}
 
@@ -174,7 +174,7 @@ void AtlasViewer::Init()
 		m_Pixelsize.low = m_Dy;
 	}
 
-	m_Image.create(int(m_Width), int(m_Height), 32);
+	m_Image = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
 	delete[] m_CurrentBmpbits;
 	delete[] m_CurrentTissue;
 	m_CurrentBmpbits = new float[m_Height * (unsigned)(m_Width)];
