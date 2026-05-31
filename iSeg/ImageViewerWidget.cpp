@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -75,20 +75,20 @@ ImageViewerWidget::ImageViewerWidget(QWidget* parent, Qt::WindowFlags wFlags)
 	m_Addtissue3D = new QAction("Add Tissue 3&D", this);
 	m_Subtissue = new QAction("&Subtract Tissue", this);
 	m_Addtissuelarger = new QAction("Add Tissue &Larger", this);
-	QObject_connect(m_Addmark, SIGNAL(activated()), this, SLOT(AddMark()));
-	QObject_connect(m_Addlabel, SIGNAL(activated()), this, SLOT(AddLabel()));
-	QObject_connect(m_Clearmarks, SIGNAL(activated()), this, SLOT(ClearMarks()));
-	QObject_connect(m_Removemark, SIGNAL(activated()), this, SLOT(RemoveMark()));
-	QObject_connect(m_Addtissue, SIGNAL(activated()), this, SLOT(AddTissue()));
-	QObject_connect(m_Addtissueconnected, SIGNAL(activated()), this, SLOT(AddTissueConnected()));
-	QObject_connect(m_Subtissue, SIGNAL(activated()), this, SLOT(SubTissue()));
-	QObject_connect(m_Addtissue3D, SIGNAL(activated()), this, SLOT(AddTissue3D()));
-	QObject_connect(m_Addtissuelarger, SIGNAL(activated()), this, SLOT(AddTissuelarger()));
-	QObject_connect(m_Selecttissue, SIGNAL(activated()), this, SLOT(SelectTissue()));
-	QObject_connect(m_Addtoselection, SIGNAL(activated()), this, SLOT(AddToSelectedTissues()));
-	QObject_connect(m_Viewtissue, SIGNAL(activated()), this, SLOT(ViewTissueSurface()));
-	QObject_connect(m_Viewtarget, SIGNAL(activated()), this, SLOT(ViewTargetSurface()));
-	QObject_connect(m_Nexttargetslice, SIGNAL(activated()), this, SLOT(NextTargetSlice()));
+	QObject_connect(m_Addmark, SIGNAL(triggered()), this, SLOT(AddMark()));
+	QObject_connect(m_Addlabel, SIGNAL(triggered()), this, SLOT(AddLabel()));
+	QObject_connect(m_Clearmarks, SIGNAL(triggered()), this, SLOT(ClearMarks()));
+	QObject_connect(m_Removemark, SIGNAL(triggered()), this, SLOT(RemoveMark()));
+	QObject_connect(m_Addtissue, SIGNAL(triggered()), this, SLOT(AddTissue()));
+	QObject_connect(m_Addtissueconnected, SIGNAL(triggered()), this, SLOT(AddTissueConnected()));
+	QObject_connect(m_Subtissue, SIGNAL(triggered()), this, SLOT(SubTissue()));
+	QObject_connect(m_Addtissue3D, SIGNAL(triggered()), this, SLOT(AddTissue3D()));
+	QObject_connect(m_Addtissuelarger, SIGNAL(triggered()), this, SLOT(AddTissuelarger()));
+	QObject_connect(m_Selecttissue, SIGNAL(triggered()), this, SLOT(SelectTissue()));
+	QObject_connect(m_Addtoselection, SIGNAL(triggered()), this, SLOT(AddToSelectedTissues()));
+	QObject_connect(m_Viewtissue, SIGNAL(triggered()), this, SLOT(ViewTissueSurface()));
+	QObject_connect(m_Viewtarget, SIGNAL(triggered()), this, SLOT(ViewTargetSurface()));
+	QObject_connect(m_Nexttargetslice, SIGNAL(triggered()), this, SLOT(NextTargetSlice()));
 }
 
 ImageViewerWidget::~ImageViewerWidget()
@@ -287,8 +287,8 @@ void ImageViewerWidget::update(QRect rect)
 		m_VmOld.clear();
 		m_Width = m_Bmphand->ReturnWidth();
 		m_Height = m_Bmphand->ReturnHeight();
-		m_Image.create(int(m_Width), int(m_Height), 32);
-		m_ImageDecorated.create(int(m_Width), int(m_Height), 32);
+		m_Image = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
+		m_ImageDecorated = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
 		setFixedSize((int)m_Width * m_Zoom * m_Pixelsize.high, (int)m_Height * m_Zoom * m_Pixelsize.low);
 
 		if (m_Bmporwork && m_Workborder)
@@ -318,8 +318,8 @@ void ImageViewerWidget::Init(SlicesHandler* hand3D, bool bmporwork1)
 	m_Width = m_Bmphand->ReturnWidth();
 	m_Height = m_Bmphand->ReturnHeight();
 	m_Marks = m_Bmphand->ReturnMarks();
-	m_Image.create(int(m_Width), int(m_Height), 32);
-	m_ImageDecorated.create(int(m_Width), int(m_Height), 32);
+	m_Image = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
+	m_ImageDecorated = QImage(int(m_Width), int(m_Height), QImage::Format_RGB32);
 
 	setFixedSize((int)m_Width * m_Zoom * m_Pixelsize.high, (int)m_Height * m_Zoom * m_Pixelsize.low);
 	setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -430,7 +430,7 @@ void ImageViewerWidget::ReloadBits()
 
 	// now decorate
 	QRgb color_used = m_ActualColor.rgb();
-	QRgb color_dim = (m_ActualColor.light(30)).rgb();
+	QRgb color_dim = (m_ActualColor.lighter(30)).rgb();
 
 	if (m_Workborder && m_Bmporwork &&
 			((!m_Workborderlimit) || (unsigned)m_Vp.size() < unsigned(m_Width) * m_Height / 5))
@@ -559,7 +559,7 @@ void ImageViewerWidget::AddMark()
 void ImageViewerWidget::AddLabel()
 {
 	bool ok;
-	QString new_text = QInputDialog::getText("Label", "Enter a name for the label:", QLineEdit::Normal, "", &ok, this);
+	QString new_text = QInputDialog::getText(this, "Label", "Enter a name for the label:", QLineEdit::Normal, "", &ok);
 	if (ok)
 	{
 		Point p;
@@ -845,7 +845,7 @@ void ImageViewerWidget::wheelEvent(QWheelEvent* e)
 {
 	int delta = e->delta();
 
-	if (e->state() & Qt::ControlModifier)
+	if (e->modifiers() & Qt::ControlModifier)
 	{
 		m_MousePosZoom = e->pos();
 		emit MousePosZoomSign(m_MousePosZoom);
@@ -892,7 +892,7 @@ void ImageViewerWidget::VpToImageDecorator()
 	}
 
 	QRgb color_used = m_OutlineColor.rgb();
-	QRgb color_dim = (m_OutlineColor.light(30)).rgb();
+	QRgb color_dim = (m_OutlineColor.lighter(30)).rgb();
 	if ((!m_Workborderlimit) || ((unsigned)m_Vp.size() < unsigned(m_Width) * m_Height / 5))
 	{
 		for (auto& p : m_Vp)
@@ -965,7 +965,7 @@ void ImageViewerWidget::Vp1dynChanged()
 	}
 
 	QRgb color_used = m_ActualColor.rgb();
-	QRgb color_dim = (m_ActualColor.light(30)).rgb();
+	QRgb color_dim = (m_ActualColor.lighter(30)).rgb();
 	QRgb color_highlight = (m_ActualColor.lighter(60)).rgb();
 	if ((!m_Workborderlimit) || ((unsigned)m_Vp.size() < unsigned(m_Width) * m_Height / 5))
 	{

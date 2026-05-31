@@ -65,20 +65,20 @@
 
 #include <boost/filesystem.hpp>
 
+#include <QApplication>
 #include <QDesktopWidget>
+#include <QDockWidget>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMenuBar>
+#include <QProgressDialog>
+#include <QSettings>
 #include <QShortcut>
 #include <QSignalMapper>
 #include <QStackedWidget>
 #include <QStatusBar>
-#include <QToolButton>
-#include <QApplication>
-#include <QDockWidget>
-#include <QMenuBar>
-#include <QProgressDialog>
-#include <QSettings>
 #include <QTextEdit>
+#include <QToolButton>
 #include <QToolTip>
 
 #include <Q3ScrollView>
@@ -325,7 +325,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_TabOld = nullptr;
 
 	setWindowTitle(QString(" iSeg ") + QString(xstr(ISEG_VERSION)) +
-						 QString(" - No Filename"));
+								 QString(" - No Filename"));
 	QIcon isegicon(m_MPicpath.absoluteFilePath("isegicon.png"));
 	setWindowIcon(isegicon);
 	m_MLocationstring = locationstring;
@@ -1341,7 +1341,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	QObject_connect(this, SIGNAL(MarksChanged()), m_WorkShow, SLOT(MarkChanged()));
 	QObject_connect(this, SIGNAL(TissuesChanged()), this, SLOT(UpdateTissue()));
 	QObject_connect(m_BmpShow, SIGNAL(AddmarkSign(Point)), this, SLOT(AddMark(Point)));
-	QObject_connect(m_BmpShow, SIGNAL(AddlabelSign(Point,std::string)), this, SLOT(AddLabel(Point,std::string)));
+	QObject_connect(m_BmpShow, SIGNAL(AddlabelSign(Point, std::string)), this, SLOT(AddLabel(Point, std::string)));
 	QObject_connect(m_BmpShow, SIGNAL(ClearmarksSign()), this, SLOT(ClearMarks()));
 	QObject_connect(m_BmpShow, SIGNAL(RemovemarkSign(Point)), this, SLOT(RemoveMark(Point)));
 	QObject_connect(m_BmpShow, SIGNAL(AddtissueSign(Point)), this, SLOT(AddTissue(Point)));
@@ -1349,10 +1349,10 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	QObject_connect(m_BmpShow, SIGNAL(SubtissueSign(Point)), this, SLOT(SubtractTissue(Point)));
 	QObject_connect(m_BmpShow, SIGNAL(Addtissue3DSign(Point)), this, SLOT(AddTissue3D(Point)));
 	QObject_connect(m_BmpShow, SIGNAL(AddtissuelargerSign(Point)), this, SLOT(AddTissuelarger(Point)));
-	QObject_connect(m_BmpShow, SIGNAL(SelecttissueSign(Point,bool)), this, SLOT(SelectTissue(Point,bool)));
+	QObject_connect(m_BmpShow, SIGNAL(SelecttissueSign(Point, bool)), this, SLOT(SelectTissue(Point, bool)));
 	QObject_connect(m_BmpShow, SIGNAL(ViewtissueSign(Point)), this, SLOT(ViewTissue(Point)));
 	QObject_connect(m_WorkShow, SIGNAL(AddmarkSign(Point)), this, SLOT(AddMark(Point)));
-	QObject_connect(m_WorkShow, SIGNAL(AddlabelSign(Point,std::string)), this, SLOT(AddLabel(Point,std::string)));
+	QObject_connect(m_WorkShow, SIGNAL(AddlabelSign(Point, std::string)), this, SLOT(AddLabel(Point, std::string)));
 	QObject_connect(m_WorkShow, SIGNAL(ClearmarksSign()), this, SLOT(ClearMarks()));
 	QObject_connect(m_WorkShow, SIGNAL(RemovemarkSign(Point)), this, SLOT(RemoveMark(Point)));
 	QObject_connect(m_WorkShow, SIGNAL(AddtissueSign(Point)), this, SLOT(AddTissue(Point)));
@@ -1360,7 +1360,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	QObject_connect(m_WorkShow, SIGNAL(SubtissueSign(Point)), this, SLOT(SubtractTissue(Point)));
 	QObject_connect(m_WorkShow, SIGNAL(Addtissue3DSign(Point)), this, SLOT(AddTissue3D(Point)));
 	QObject_connect(m_WorkShow, SIGNAL(AddtissuelargerSign(Point)), this, SLOT(AddTissuelarger(Point)));
-	QObject_connect(m_WorkShow, SIGNAL(SelecttissueSign(Point,bool)), this, SLOT(SelectTissue(Point,bool)));
+	QObject_connect(m_WorkShow, SIGNAL(SelecttissueSign(Point, bool)), this, SLOT(SelectTissue(Point, bool)));
 	QObject_connect(m_WorkShow, SIGNAL(ViewtargetSign(Point)), this, SLOT(ExecuteTargetSurfaceviewer()));
 	QObject_connect(m_TissueFilter, SIGNAL(textChanged(QString)), this, SLOT(TissueFilterChanged(QString)));
 	QObject_connect(m_LockTissues, SIGNAL(clicked()), this, SLOT(LockAllTissues()));
@@ -1379,7 +1379,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_TissueTreeWidget->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
 
 	QObject_connect(m_TissueTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(TissueSelectionChanged()));
-	QObject_connect(m_TissueTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(TreeWidgetDoubleclicked(QTreeWidgetItem*,int)));
+	QObject_connect(m_TissueTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(TreeWidgetDoubleclicked(QTreeWidgetItem*, int)));
 	QObject_connect(m_TissueTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(TreeWidgetContextmenu(QPoint)));
 
 	tissues_size_t curr_tissue_type = m_TissueTreeWidget->GetCurrentType();
@@ -1407,30 +1407,30 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 
 	QObject_connect(m_PbMask, SIGNAL(clicked()), this, SLOT(MaskSource()));
 
-	QObject_connect(m_BmpScroller, SIGNAL(contentsMoving(int,int)), this, SLOT(SetWorkContentsPos(int,int)));
-	QObject_connect(m_WorkScroller, SIGNAL(contentsMoving(int,int)), this, SLOT(SetBmpContentsPos(int,int)));
-	QObject_connect(m_BmpShow, SIGNAL(SetcenterSign(int,int)), m_BmpScroller, SLOT(center(int,int)));
-	QObject_connect(m_WorkShow, SIGNAL(SetcenterSign(int,int)), m_WorkScroller, SLOT(center(int,int)));
+	QObject_connect(m_BmpScroller, SIGNAL(contentsMoving(int, int)), this, SLOT(SetWorkContentsPos(int, int)));
+	QObject_connect(m_WorkScroller, SIGNAL(contentsMoving(int, int)), this, SLOT(SetBmpContentsPos(int, int)));
+	QObject_connect(m_BmpShow, SIGNAL(SetcenterSign(int, int)), m_BmpScroller, SLOT(center(int, int)));
+	QObject_connect(m_WorkShow, SIGNAL(SetcenterSign(int, int)), m_WorkScroller, SLOT(center(int, int)));
 	m_TomoveScroller = true;
 
 	QObject_connect(m_ZoomWidget, SIGNAL(SetZoom(double)), m_BmpShow, SLOT(SetZoom(double)));
 	QObject_connect(m_ZoomWidget, SIGNAL(SetZoom(double)), m_WorkShow, SLOT(SetZoom(double)));
 
-	QObject_connect(this, SIGNAL(BeginDataexport(DataSelection&,QWidget*)), this, SLOT(HandleBeginDataexport(DataSelection&,QWidget*)));
+	QObject_connect(this, SIGNAL(BeginDataexport(DataSelection&, QWidget*)), this, SLOT(HandleBeginDataexport(DataSelection&, QWidget*)));
 	QObject_connect(this, SIGNAL(EndDataexport(QWidget*)), this, SLOT(HandleEndDataexport(QWidget*)));
 
-	QObject_connect(this, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(this, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(this, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(this, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 
-	QObject_connect(m_ScaleDialog, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_ScaleDialog, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
-	QObject_connect(m_ImagemathDialog, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_ImagemathDialog, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
-	QObject_connect(m_ImageoverlayDialog, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_ImageoverlayDialog, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
-	QObject_connect(m_BitstackWidget, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_BitstackWidget, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
-	QObject_connect(m_BitstackWidget, SIGNAL(BeginDataexport(DataSelection&,QWidget*)), this, SLOT(HandleBeginDataexport(DataSelection&,QWidget*)));
+	QObject_connect(m_ScaleDialog, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_ScaleDialog, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
+	QObject_connect(m_ImagemathDialog, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_ImagemathDialog, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
+	QObject_connect(m_ImageoverlayDialog, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_ImageoverlayDialog, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
+	QObject_connect(m_BitstackWidget, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_BitstackWidget, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
+	QObject_connect(m_BitstackWidget, SIGNAL(BeginDataexport(DataSelection&, QWidget*)), this, SLOT(HandleBeginDataexport(DataSelection&, QWidget*)));
 	QObject_connect(m_BitstackWidget, SIGNAL(EndDataexport(QWidget*)), this, SLOT(HandleEndDataexport(QWidget*)));
 	QObject_connect(m_OverlayWidget, SIGNAL(OverlayChanged()), m_BmpShow, SLOT(OverlayChanged()));
 	QObject_connect(m_OverlayWidget, SIGNAL(OverlayChanged()), m_WorkShow, SLOT(OverlayChanged()));
@@ -1441,10 +1441,10 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 
 	QObject_connect(m_MultidatasetWidget, SIGNAL(DatasetChanged()), m_BmpShow, SLOT(OverlayChanged()));
 	QObject_connect(m_MultidatasetWidget, SIGNAL(DatasetChanged()), this, SLOT(DatasetChanged()));
-	QObject_connect(m_MultidatasetWidget, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_MultidatasetWidget, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
-	QObject_connect(m_DataIteratorWidget, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_DataIteratorWidget, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(m_MultidatasetWidget, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_MultidatasetWidget, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
+	QObject_connect(m_DataIteratorWidget, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_DataIteratorWidget, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 
 	QObject_connect(m_CbTissuelock, SIGNAL(clicked()), this, SLOT(TissuelockToggled()));
 
@@ -1470,8 +1470,8 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	for (auto widget : m_Tabwidgets)
 	{
 		assert(widget);
-		QObject_connect(widget, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-		QObject_connect(widget, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+		QObject_connect(widget, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+		QObject_connect(widget, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 	}
 
 	QObject_connect(m_BmpShow, SIGNAL(MousePosZoomSign(QPoint)), this, SLOT(MousePosZoomChanged(QPoint)));
@@ -2452,8 +2452,8 @@ void MainWindow::ExecuteLoadrtstruct()
 
 	RadiotherapyStructureSetImporter ri(loadfilename, m_Handler3D, this);
 
-	QObject_connect(&ri, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(&ri, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(&ri, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(&ri, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 
 	ri.move(QCursor::pos());
 	ri.exec();
@@ -2462,8 +2462,8 @@ void MainWindow::ExecuteLoadrtstruct()
 	TissuenrChanged(m_TissueTreeWidget->GetCurrentType() - 1);
 
 	// \todo is this necessary?
-	QObject_disconnect(&ri, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_disconnect(&ri, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_disconnect(&ri, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_disconnect(&ri, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 
 	ResetBrightnesscontrast();
 #endif
@@ -2586,7 +2586,7 @@ void MainWindow::ExecuteSaveprojas()
 		progress.setValue(1);
 
 		setWindowTitle(QString(" iSeg ") + QString(xstr(ISEG_VERSION)) +
-							 QString(" - ") + TruncateFileName(savefilename));
+									 QString(" - ") + TruncateFileName(savefilename));
 
 		//m_saveprojfilename = tempFileName;
 		//AddLoadProj(tempFileName);
@@ -3010,7 +3010,7 @@ void MainWindow::ExecuteSaveproj()
 			progress.setValue(1);
 
 			setWindowTitle(QString(" iSeg ") + QString(xstr(ISEG_VERSION)) +
-								 QString(" - ") + TruncateFileName(m_MSaveprojfilename));
+										 QString(" - ") + TruncateFileName(m_MSaveprojfilename));
 
 			m_MSaveprojfilename = temp_file_name;
 
@@ -3125,7 +3125,7 @@ void MainWindow::LoadAny(const QString& loadfilename)
 	{
 		return;
 	}
-	
+
 	// Deduce the importer from the file-ending
 	const auto extension = boost::filesystem::extension(file_path);
 
@@ -3153,7 +3153,7 @@ void MainWindow::LoadAny(const QString& loadfilename)
 	else
 	{
 		ISEG_WARNING("Could not load file: " << file_path.string()
-								 << " : unsupported extension: " << extension);
+																				 << " : unsupported extension: " << extension);
 	}
 }
 
@@ -3903,7 +3903,7 @@ void MainWindow::ExecuteNew()
 
 	m_MSaveprojfilename = "";
 	setWindowTitle(QString(" iSeg ") + QString(xstr(ISEG_VERSION)) +
-						 QString(" - No Filename"));
+								 QString(" - No Filename"));
 	m_MNotes->clear();
 
 	ResetBrightnesscontrast();
@@ -3928,8 +3928,8 @@ void MainWindow::StartSurfaceviewer(int mode)
 	m_SurfaceViewer = new SurfaceViewerWidget(m_Handler3D, static_cast<SurfaceViewerWidget::eInputType>(mode), nullptr);
 	QObject_connect(m_SurfaceViewer, SIGNAL(Hasbeenclosed()), this, SLOT(SurfaceViewerClosed()));
 
-	QObject_connect(m_SurfaceViewer, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_SurfaceViewer, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(m_SurfaceViewer, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_SurfaceViewer, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 
 	m_SurfaceViewer->show();
 	m_SurfaceViewer->raise();
@@ -4168,23 +4168,23 @@ void MainWindow::ExecuteHisto()
 void MainWindow::ExecuteScale()
 {
 	ScaleWork sw(m_Handler3D, m_MPicpath, this);
-	QObject_connect(&sw, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(&sw, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(&sw, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(&sw, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 	sw.move(QCursor::pos());
 	sw.exec();
-	QObject_disconnect(&sw, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_disconnect(&sw, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_disconnect(&sw, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_disconnect(&sw, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 }
 
 void MainWindow::ExecuteImagemath()
 {
 	ImageMath im(m_Handler3D, this);
-	QObject_connect(&im, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(&im, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(&im, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(&im, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 	im.move(QCursor::pos());
 	im.exec();
-	QObject_disconnect(&im, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_disconnect(&im, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_disconnect(&im, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_disconnect(&im, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 }
 
 void MainWindow::ExecuteUnwrap()
@@ -4202,12 +4202,12 @@ void MainWindow::ExecuteUnwrap()
 void MainWindow::ExecuteOverlay()
 {
 	ImageOverlay io(m_Handler3D, this);
-	QObject_connect(&io, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(&io, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(&io, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(&io, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 	io.move(QCursor::pos());
 	io.exec();
-	QObject_disconnect(&io, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_disconnect(&io, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_disconnect(&io, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_disconnect(&io, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 }
 
 void MainWindow::ExecutePixelsize()
@@ -4515,8 +4515,8 @@ void MainWindow::ExecuteXslice()
 		m_Xsliceshower->SetScale(offset1, factor1, true);
 		m_WorkShow->GetScaleoffsetfactor(offset1, factor1);
 		m_Xsliceshower->SetScale(offset1, factor1, false);
-		QObject_connect(m_BmpShow, SIGNAL(ScaleoffsetfactorChanged(float,float,bool)), m_Xsliceshower, SLOT(SetScale(float,float,bool)));
-		QObject_connect(m_WorkShow, SIGNAL(ScaleoffsetfactorChanged(float,float,bool)), m_Xsliceshower, SLOT(SetScale(float,float,bool)));
+		QObject_connect(m_BmpShow, SIGNAL(ScaleoffsetfactorChanged(float, float, bool)), m_Xsliceshower, SLOT(SetScale(float, float, bool)));
+		QObject_connect(m_WorkShow, SIGNAL(ScaleoffsetfactorChanged(float, float, bool)), m_Xsliceshower, SLOT(SetScale(float, float, bool)));
 		QObject_connect(m_Xsliceshower, SIGNAL(SliceChanged(int)), this, SLOT(XshowerSlicechanged()));
 		QObject_connect(m_Xsliceshower, SIGNAL(Hasbeenclosed()), this, SLOT(XsliceClosed()));
 		QObject_connect(m_ZoomWidget, SIGNAL(SetZoom(double)), m_Xsliceshower, SLOT(SetZoom(double)));
@@ -4555,8 +4555,8 @@ void MainWindow::ExecuteYslice()
 		m_Ysliceshower->SetScale(offset1, factor1, true);
 		m_WorkShow->GetScaleoffsetfactor(offset1, factor1);
 		m_Ysliceshower->SetScale(offset1, factor1, false);
-		QObject_connect(m_BmpShow, SIGNAL(ScaleoffsetfactorChanged(float,float,bool)), m_Ysliceshower, SLOT(SetScale(float,float,bool)));
-		QObject_connect(m_WorkShow, SIGNAL(ScaleoffsetfactorChanged(float,float,bool)), m_Ysliceshower, SLOT(SetScale(float,float,bool)));
+		QObject_connect(m_BmpShow, SIGNAL(ScaleoffsetfactorChanged(float, float, bool)), m_Ysliceshower, SLOT(SetScale(float, float, bool)));
+		QObject_connect(m_WorkShow, SIGNAL(ScaleoffsetfactorChanged(float, float, bool)), m_Ysliceshower, SLOT(SetScale(float, float, bool)));
 		QObject_connect(m_Ysliceshower, SIGNAL(SliceChanged(int)), this, SLOT(YshowerSlicechanged()));
 		QObject_connect(m_Ysliceshower, SIGNAL(Hasbeenclosed()), this, SLOT(YsliceClosed()));
 		QObject_connect(m_ZoomWidget, SIGNAL(SetZoom(double)), m_Ysliceshower, SLOT(SetZoom(double)));
@@ -5219,7 +5219,7 @@ void MainWindow::ModifTissue()
 void MainWindow::ModifFolder()
 {
 	bool ok = false;
-	QString new_folder_name = QInputDialog::getText("Folder name", "Enter a name for the folder:", QLineEdit::Normal, m_TissueTreeWidget->GetCurrentName(), &ok, this);
+	QString new_folder_name = QInputDialog::getText(this, "Folder name", "Enter a name for the folder:", QLineEdit::Normal, m_TissueTreeWidget->GetCurrentName(), &ok);
 	if (ok)
 	{
 		m_TissueTreeWidget->SetCurrentFolderName(new_folder_name);
@@ -5439,7 +5439,7 @@ void MainWindow::Selectedtissue2work()
 	m_Handler3D->ClearWork(); // resets work to 0.0f, then adds each tissue one-by-one
 
 	std::vector<tissues_size_t> selected_tissues;
-    const auto items = m_TissueTreeWidget->selectedItems();
+	const auto items = m_TissueTreeWidget->selectedItems();
 	for (const auto& item : items)
 	{
 		selected_tissues.push_back(m_TissueTreeWidget->GetType(item));
@@ -6065,8 +6065,8 @@ void MainWindow::TabChanged(int idx)
 			QObject_disconnect(m_MeasurementWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_BmpShow, SLOT(SetVp1(std::vector<Point>*)));
 			QObject_disconnect(m_MeasurementWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_WorkShow, SLOT(SetVp1(std::vector<Point>*)));
 			QObject_disconnect(m_MeasurementWidget, SIGNAL(VpdynChanged(std::vector<Point>*)), m_WorkShow, SLOT(SetVpdyn(std::vector<Point>*)));
-			QObject_disconnect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*,bool)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*,bool)));
-			QObject_disconnect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*,bool)), m_WorkShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*,bool)));
+			QObject_disconnect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*, bool)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*, bool)));
+			QObject_disconnect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*, bool)), m_WorkShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*, bool)));
 
 			m_WorkShow->setMouseTracking(false);
 			m_BmpShow->setMouseTracking(false);
@@ -6078,7 +6078,7 @@ void MainWindow::TabChanged(int idx)
 		else if (m_TabOld == m_HystWidget)
 		{
 			QObject_disconnect(m_HystWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_BmpShow, SLOT(SetVp1(std::vector<Point>*)));
-			QObject_disconnect(m_HystWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*)));
+			QObject_disconnect(m_HystWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*)));
 		}
 		else if (m_TabOld == m_LivewireWidget)
 		{
@@ -6086,7 +6086,7 @@ void MainWindow::TabChanged(int idx)
 			QObject_disconnect(m_BmpShow, SIGNAL(MousepressedmidSign(Point)), m_LivewireWidget, SLOT(PtMidclicked(Point)));
 			QObject_disconnect(m_BmpShow, SIGNAL(MousedoubleclickmidSign(Point)), m_LivewireWidget, SLOT(PtDoubleclickedmid(Point)));
 			QObject_disconnect(m_LivewireWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_BmpShow, SLOT(SetVp1(std::vector<Point>*)));
-			QObject_disconnect(m_LivewireWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*)));
+			QObject_disconnect(m_LivewireWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*)));
 
 			m_BmpShow->setMouseTracking(false);
 		}
@@ -6132,8 +6132,8 @@ void MainWindow::TabChanged(int idx)
 			QObject_connect(m_MeasurementWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_BmpShow, SLOT(SetVp1(std::vector<Point>*)));
 			QObject_connect(m_MeasurementWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_WorkShow, SLOT(SetVp1(std::vector<Point>*)));
 			QObject_connect(m_MeasurementWidget, SIGNAL(VpdynChanged(std::vector<Point>*)), m_WorkShow, SLOT(SetVpdyn(std::vector<Point>*)));
-			QObject_connect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*,bool)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*,bool)));
-			QObject_connect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*,bool)), m_WorkShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*,bool)));
+			QObject_connect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*, bool)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*, bool)));
+			QObject_connect(m_MeasurementWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*, bool)), m_WorkShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*, bool)));
 
 			m_WorkShow->setMouseTracking(true);
 			m_BmpShow->setMouseTracking(true);
@@ -6145,7 +6145,7 @@ void MainWindow::TabChanged(int idx)
 		else if (qw == m_HystWidget)
 		{
 			QObject_connect(m_HystWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_BmpShow, SLOT(SetVp1(std::vector<Point>*)));
-			QObject_connect(m_HystWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*)));
+			QObject_connect(m_HystWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*)));
 		}
 		else if (qw == m_LivewireWidget)
 		{
@@ -6153,7 +6153,7 @@ void MainWindow::TabChanged(int idx)
 			QObject_connect(m_BmpShow, SIGNAL(MousepressedmidSign(Point)), m_LivewireWidget, SLOT(PtMidclicked(Point)));
 			QObject_connect(m_BmpShow, SIGNAL(MousedoubleclickmidSign(Point)), m_LivewireWidget, SLOT(PtDoubleclickedmid(Point)));
 			QObject_connect(m_LivewireWidget, SIGNAL(Vp1Changed(std::vector<Point>*)), m_BmpShow, SLOT(SetVp1(std::vector<Point>*)));
-			QObject_connect(m_LivewireWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*,std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*,std::vector<Point>*)));
+			QObject_connect(m_LivewireWidget, SIGNAL(Vp1dynChanged(std::vector<Point>*, std::vector<Point>*)), m_BmpShow, SLOT(SetVp1Dyn(std::vector<Point>*, std::vector<Point>*)));
 
 			m_BmpShow->setMouseTracking(true);
 		}
@@ -6316,7 +6316,7 @@ void MainWindow::LoadLoadProj(const QString& path1)
 void MainWindow::AddLoadProj(const QString& path1)
 {
 	m_MLoadprojfilename.InsertProjectFileName(path1);
-	
+
 	for (int i = 0; i < 4; ++i)
 	{
 		if (m_MLoadprojfilename.m_RecentProjectFileNames[i] != "")
@@ -6794,11 +6794,11 @@ void MainWindow::UpdateRangesHelper()
 
 void MainWindow::CancelTransformHelper()
 {
-	QObject_disconnect(m_TransformWidget, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_disconnect(m_TransformWidget, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_disconnect(m_TransformWidget, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_disconnect(m_TransformWidget, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 	m_TransformWidget->CancelTransform();
-	QObject_connect(m_TransformWidget, SIGNAL(BeginDatachange(DataSelection&,QWidget*,bool)), this, SLOT(HandleBeginDatachange(DataSelection&,QWidget*,bool)));
-	QObject_connect(m_TransformWidget, SIGNAL(EndDatachange(QWidget*,eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*,eEndUndoAction)));
+	QObject_connect(m_TransformWidget, SIGNAL(BeginDatachange(DataSelection&, QWidget*, bool)), this, SLOT(HandleBeginDatachange(DataSelection&, QWidget*, bool)));
+	QObject_connect(m_TransformWidget, SIGNAL(EndDatachange(QWidget*, eEndUndoAction)), this, SLOT(HandleEndDatachange(QWidget*, eEndUndoAction)));
 
 	// Signal changed data
 	bool bmp, work, tissues;

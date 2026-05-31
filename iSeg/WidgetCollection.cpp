@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -294,7 +294,7 @@ HistoWin::HistoWin(unsigned int* histo1, QWidget* parent, Qt::WindowFlags wFlags
 		: QWidget(parent, wFlags)
 {
 	m_Histo = histo1;
-	m_Image.create(258, 258, 8);
+	m_Image = QImage(258, 258, QImage::Format_Indexed8);
 	m_Image.setNumColors(256);
 	for (int i = 0; i < 256; i++)
 	{
@@ -558,7 +558,7 @@ TissueAdder::TissueAdder(bool modifyTissue, TissueTreeWidget* tissueTree, QWidge
 	m_AddTissue = new QPushButton("");
 	m_CloseButton = new QPushButton("Close");
 
-	// layout 
+	// layout
 	auto hbox1 = new QHBoxLayout;
 	hbox1->addWidget(new QLabel("Tissue Name: "));
 	hbox1->addWidget(m_NameField);
@@ -947,7 +947,7 @@ void TissueHierarchyWidget::NewHierarchyPressed()
 
 	// Get hierarchy name
 	bool ok = false;
-	QString new_hierarchy_name = QInputDialog::getText("Hierarchy name", "Enter a name for the hierarchy:", QLineEdit::Normal, "New Hierarchy", &ok, this);
+	QString new_hierarchy_name = QInputDialog::getText(this, "Hierarchy name", "Enter a name for the hierarchy:", QLineEdit::Normal, "New Hierarchy", &ok);
 	if (!ok)
 	{
 		return;
@@ -992,7 +992,7 @@ bool TissueHierarchyWidget::SaveHierarchyAsPressed()
 
 	// Get hierarchy name
 	bool ok = false;
-	QString new_hierarchy_name = QInputDialog::getText("Hierarchy name", "Enter a name for the hierarchy:", QLineEdit::Normal, m_TissueTreeWidget->GetCurrentHierarchyName(), &ok, this);
+	QString new_hierarchy_name = QInputDialog::getText(this, "Hierarchy name", "Enter a name for the hierarchy:", QLineEdit::Normal, m_TissueTreeWidget->GetCurrentHierarchyName(), &ok);
 	if (!ok)
 	{
 		return false;
@@ -1100,11 +1100,11 @@ void BitsStack::PushHelper(bool source, bool target, bool tissue)
 	{
 		// Copy current slice
 		bool ok;
-		QString new_text = QInputDialog::getText("Name", "Enter a name for the picture:", QLineEdit::Normal, "", &ok, this);
+		QString new_text = QInputDialog::getText(this, "Name", "Enter a name for the picture:", QLineEdit::Normal, "", &ok);
 		new_text = new_text + QString(" (%1)").arg(m_Handler3D->ActiveSlice() + 1);
 		while (ok && !m_BitsNames->findItems(new_text, Qt::MatchExactly).empty())
 		{
-			new_text = QInputDialog::getText("Name", "Enter a !new! name for the picture:", QLineEdit::Normal, "", &ok, this);
+			new_text = QInputDialog::getText(this, "Name", "Enter a !new! name for the picture:", QLineEdit::Normal, "", &ok);
 			new_text = new_text + QString(" (%1)").arg(m_Handler3D->ActiveSlice() + 1);
 		}
 		if (ok)
@@ -1147,7 +1147,7 @@ void BitsStack::PushHelper(bool source, bool target, bool tissue)
 		}
 
 		matchfound = true;
-		QString new_text = QInputDialog::getText("Name", "Enter a name for the pictures:", QLineEdit::Normal, "", &ok, this);
+		QString new_text = QInputDialog::getText(this, "Name", "Enter a name for the pictures:", QLineEdit::Normal, "", &ok);
 		while (ok && matchfound)
 		{
 			matchfound = false;
@@ -1158,7 +1158,7 @@ void BitsStack::PushHelper(bool source, bool target, bool tissue)
 				if (!m_BitsNames->findItems(new_text_ext, Qt::MatchExactly).empty())
 				{
 					matchfound = true;
-					new_text = QInputDialog::getText("Name", "Enter a !new! name for the pictures:", QLineEdit::Normal, "", &ok, this);
+					new_text = QInputDialog::getText(this, "Name", "Enter a !new! name for the pictures:", QLineEdit::Normal, "", &ok);
 					break;
 				}
 			}
@@ -1289,7 +1289,7 @@ void BitsStack::LoaditemPressed()
 		// Load multiple items
 		bool ok;
 		bool matchfound = true;
-		QString new_text = QInputDialog::getText("Name", "Enter a name for the pictures:", QLineEdit::Normal, "", &ok, this);
+		QString new_text = QInputDialog::getText(this, "Name", "Enter a name for the pictures:", QLineEdit::Normal, "", &ok);
 		while (ok && matchfound)
 		{
 			matchfound = false;
@@ -1301,7 +1301,7 @@ void BitsStack::LoaditemPressed()
 				if (!m_BitsNames->findItems(new_text_ext, Qt::MatchExactly).empty())
 				{
 					matchfound = true;
-					new_text = QInputDialog::getText("Name", "Enter a !new! name for the pictures:", QLineEdit::Normal, "", &ok, this);
+					new_text = QInputDialog::getText(this, "Name", "Enter a !new! name for the pictures:", QLineEdit::Normal, "", &ok);
 					break;
 				}
 			}
@@ -1328,11 +1328,11 @@ void BitsStack::LoaditemPressed()
 	{
 		// Load single item
 		bool ok;
-		QString new_text = QInputDialog::getText("Name", "Enter a name for the picture:", QLineEdit::Normal, "", &ok, this);
+		QString new_text = QInputDialog::getText(this, "Name", "Enter a name for the picture:", QLineEdit::Normal, "", &ok);
 		while (ok &&
 					 !m_BitsNames->findItems(new_text, Qt::MatchExactly).empty())
 		{
-			new_text = QInputDialog::getText("Name", "Enter a !new! name for the picture:", QLineEdit::Normal, "", &ok, this);
+			new_text = QInputDialog::getText(this, "Name", "Enter a !new! name for the picture:", QLineEdit::Normal, "", &ok);
 		}
 
 		if (ok)
@@ -2170,7 +2170,6 @@ ImageOverlay::ImageOverlay(SlicesHandler* hand3D, QWidget* parent, Qt::WindowFla
 	QObject_connect(m_ApplyButton, SIGNAL(clicked()), this, SLOT(ApplyPushed()));
 	QObject_connect(m_LeAlpha, SIGNAL(editingFinished()), this, SLOT(AlphaChanged()));
 	QObject_connect(m_SlAlpha, SIGNAL(sliderMoved(int)), this, SLOT(SliderChanged(int)));
-
 }
 
 ImageOverlay::~ImageOverlay()
@@ -2306,7 +2305,7 @@ CleanerParams::CleanerParams(int* rate1, int* minsize1, QWidget* parent, Qt::Win
 	m_SbRate->setRange(3, 10000);
 	m_SbRate->setValue(4);
 	m_SbRate->setToolTip(Format("1/rate is the percentage of the total (tissue) volume needed to force small regions to be kept (overrides Pixel Size criterion)."));
-	
+
 	m_SbMinsize = new QSpinBox;
 	m_SbMinsize->setRange(2, 10000);
 	m_SbMinsize->setValue(10);
@@ -2409,7 +2408,7 @@ void MergeProjectsDialog::AddPressed()
 void MergeProjectsDialog::RemovePressed()
 {
 	const auto remove_items = m_FileListWidget->selectedItems();
-	for (const auto& item: remove_items)
+	for (const auto& item : remove_items)
 	{
 		delete m_FileListWidget->takeItem(m_FileListWidget->row(item));
 	}
@@ -2479,7 +2478,9 @@ CheckBoneConnectivityDialog::CheckBoneConnectivityDialog(SlicesHandler* hand3D, 
 	m_ProgressText->setAlignment(Qt::AlignRight);
 
 	QStringList table_header;
-	table_header << "Bone 1" << "Bone 2" << "Slice #";
+	table_header << "Bone 1"
+							 << "Bone 2"
+							 << "Slice #";
 	m_FoundConnectionsTable->setHorizontalHeaderLabels(table_header);
 	m_FoundConnectionsTable->verticalHeader()->setVisible(false);
 	m_FoundConnectionsTable->setColumnWidth(eBoneConnectionColumn::kTissue1, 160);
@@ -2513,7 +2514,7 @@ CheckBoneConnectivityDialog::CheckBoneConnectivityDialog(SlicesHandler* hand3D, 
 	QObject_connect(m_ExecuteButton, SIGNAL(clicked()), this, SLOT(ExecutePressed()));
 	QObject_connect(m_CancelButton, SIGNAL(clicked()), this, SLOT(CancelPressed()));
 	QObject_connect(m_ExportButton, SIGNAL(clicked()), this, SLOT(ExportPressed()));
-	QObject_connect(m_FoundConnectionsTable, SIGNAL(cellClicked(int,int)), this, SLOT(CellClicked(int,int)));
+	QObject_connect(m_FoundConnectionsTable, SIGNAL(cellClicked(int, int)), this, SLOT(CellClicked(int, int)));
 
 	CheckBoneExist();
 }
