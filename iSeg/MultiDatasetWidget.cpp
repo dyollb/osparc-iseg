@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -20,10 +20,10 @@
 #include <itkRawImageIO.h>
 #include <itkResampleImageFilter.h>
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QFileDialog>
 #include <QGroupBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace iseg {
 
@@ -32,9 +32,9 @@ MultiDatasetWidget::MultiDatasetWidget(SlicesHandler* hand3D, QWidget* parent, Q
 {
 	m_AddDatasetButton = new QPushButton("Add New Dataset...");
 	m_AddDatasetButton->setToolTip(
-		"Add new image data to available datasets. Image should "
-		"be aligned (registered). If dimensions don't match, the "
-		"image will be re-sampled to the dimensions of the main dataset");
+			"Add new image data to available datasets. Image should "
+			"be aligned (registered). If dimensions don't match, the "
+			"image will be re-sampled to the dimensions of the main dataset");
 
 	m_DatasetsGroupBox = new QGroupBox("- Available datasets -");
 
@@ -163,12 +163,12 @@ void MultiDatasetWidget::AddDatasetPressed()
 		case SupportedMultiDatasetTypes::eSupportedTypes::kBMP:
 		case SupportedMultiDatasetTypes::eSupportedTypes::kDicom: {
 			loadfilenames = QFileDialog::getOpenFileNames(
+					this, "Select one or more files to open", QString::null,
 					"Images (*.dcm *.dicom *.bmp)\n"
-					"All (*)",
-					QString::null, this, "Open Files", "Select one or more files to open");
+					"All (*)");
 
 			std::vector<std::string> files;
-			for (auto it=loadfilenames.begin(); it!=loadfilenames.end(); ++it)
+			for (auto it = loadfilenames.begin(); it != loadfilenames.end(); ++it)
 			{
 				files.push_back(it->toStdString());
 			}

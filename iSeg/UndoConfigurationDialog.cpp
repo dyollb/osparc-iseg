@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -13,8 +13,8 @@
 
 #include "Interface/QtConnect.h"
 
-#include <QFormLayout>
 #include <QCheckBox>
+#include <QFormLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QWidget>
@@ -31,9 +31,13 @@ UndoConfigurationDialog::UndoConfigurationDialog(SlicesHandler* hand3D, QWidget*
 	m_CbUndo3D = new QCheckBox;
 	m_CbUndo3D->setChecked(m_Handler3D->ReturnUndo3D());
 
-	m_SbNrundo = new QSpinBox(1, 100, 1, nullptr);
+	m_SbNrundo = new QSpinBox(nullptr);
+	m_SbNrundo->setRange(1, 100);
+	m_SbNrundo->setSingleStep(1);
 	m_SbNrundo->setValue(m_Handler3D->GetNumberOfUndoSteps());
-	m_SbNrundoarrays = new QSpinBox(6, 10000, 1, nullptr);
+	m_SbNrundoarrays = new QSpinBox(nullptr);
+	m_SbNrundoarrays->setRange(6, 10000);
+	m_SbNrundoarrays->setSingleStep(1);
 	m_SbNrundoarrays->setValue(m_Handler3D->GetNumberOfUndoArrays());
 
 	m_PbClose = new QPushButton("Accept");
@@ -50,8 +54,7 @@ UndoConfigurationDialog::UndoConfigurationDialog(SlicesHandler* hand3D, QWidget*
 	QObject_connect(m_PbClose, SIGNAL(clicked()), this, SLOT(OkPressed()));
 }
 
-UndoConfigurationDialog::~UndoConfigurationDialog()
-= default;
+UndoConfigurationDialog::~UndoConfigurationDialog() = default;
 
 void UndoConfigurationDialog::OkPressed()
 {

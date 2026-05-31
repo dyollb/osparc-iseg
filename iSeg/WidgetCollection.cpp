@@ -51,13 +51,13 @@ ScaleWork::ScaleWork(SlicesHandler* hand3D, QDir picpath, QWidget* parent, Qt::W
 	m_LimitHigh = new QLineEdit(QString::number(255));
 
 	auto lb_brightness = new QLabel("B: ");
-	lb_brightness->setPixmap(QIcon(picpath.absoluteFilePath("icon-brightness.png")).pixmap());
+	lb_brightness->setPixmap(QPixmap(picpath.absoluteFilePath("icon-brightness.png")));
 	m_SlBrighness = new QSlider(Qt::Horizontal);
 	m_SlBrighness->setRange(0, 100);
 	m_SlBrighness->setValue(30);
 
 	auto lb_contrast = new QLabel("C: ");
-	lb_contrast->setPixmap(QIcon(picpath.absoluteFilePath("icon-contrast.png")).pixmap());
+	lb_contrast->setPixmap(QPixmap(picpath.absoluteFilePath("icon-contrast.png")));
 	m_SlContrast = new QSlider(Qt::Horizontal);
 	m_SlContrast->setRange(0, 99);
 	m_SlContrast->setValue(30);
@@ -357,8 +357,8 @@ ShowHisto::ShowHisto(SlicesHandler* hand3D, QWidget* parent, Qt::WindowFlags wFl
 	m_Pictselect = new QButtonGroup(this);
 	m_Bmppict = new QRadioButton("Source");
 	m_Workpict = new QRadioButton("Target");
-	m_Pictselect->insert(m_Bmppict);
-	m_Pictselect->insert(m_Workpict);
+	m_Pictselect->addButton(m_Bmppict);
+	m_Pictselect->addButton(m_Workpict);
 	m_Workpict->setChecked(true);
 
 	m_Subsect = new QCheckBox("Subsection ");
@@ -550,10 +550,18 @@ TissueAdder::TissueAdder(bool modifyTissue, TissueTreeWidget* tissueTree, QWidge
 	m_B->setRange(0, 255);
 	m_SlTransp = new QSlider(Qt::Horizontal);
 	m_SlTransp->setRange(0, 100);
-	m_SbR = new QSpinBox(0, 255, 1, this);
-	m_SbG = new QSpinBox(0, 255, 1, this);
-	m_SbB = new QSpinBox(0, 255, 1, this);
-	m_SbTransp = new QSpinBox(0, 100, 1, this);
+	m_SbR = new QSpinBox(this);
+	m_SbR->setRange(0, 255);
+	m_SbR->setSingleStep(1);
+	m_SbG = new QSpinBox(this);
+	m_SbG->setRange(0, 255);
+	m_SbG->setSingleStep(1);
+	m_SbB = new QSpinBox(this);
+	m_SbB->setRange(0, 255);
+	m_SbB->setSingleStep(1);
+	m_SbTransp = new QSpinBox(this);
+	m_SbTransp->setRange(0, 100);
+	m_SbTransp->setSingleStep(1);
 
 	m_AddTissue = new QPushButton("");
 	m_CloseButton = new QPushButton("Close");
@@ -1314,7 +1322,7 @@ void BitsStack::LoaditemPressed()
 					 iter != selected_files.end(); ++iter)
 			{
 				QString new_text_ext = new_text + QString::number(suffix++);
-				unsigned dummy = m_Handler3D->Loadstack(iter->ascii());
+				unsigned dummy = m_Handler3D->Loadstack(iter->toLocal8Bit().constData());
 				if (dummy != 123456)
 				{
 					m_BitsNr[new_text_ext] = dummy;
@@ -1407,7 +1415,7 @@ void BitsStack::DeletePressed()
 			 iter != selected_items.end(); ++iter)
 	{
 		m_Handler3D->Removestack(m_BitsNr[(*iter)->text()]);
-		m_BitsNr.erase((*iter)->text());
+		m_BitsNr.remove((*iter)->text());
 		delete m_BitsNames->takeItem(m_BitsNames->row(*iter));
 		emit StackChanged();
 	}
@@ -1600,19 +1608,19 @@ void ExtoverlayWidget::ReloadOverlay()
 	}
 	else if (m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".raw"), Qt::CaseInsensitive))
 	{
-		ok = m_Handler3D->ReadRawOverlay(m_DatasetFilepaths[m_SelectedDataset], 8, m_Handler3D->ActiveSlice());
+		ok = m_Handler3D->ReadRawOverlay(m_DatasetFilepaths[m_SelectedDataset].toUtf8().constData(), 8, m_Handler3D->ActiveSlice());
 	}
 	else if (m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".vtk"), Qt::CaseInsensitive) ||
 					 m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".vti"), Qt::CaseInsensitive))
 	{
-		ok = m_Handler3D->ReadOverlay(m_DatasetFilepaths[m_SelectedDataset], m_Handler3D->ActiveSlice());
+		ok = m_Handler3D->ReadOverlay(m_DatasetFilepaths[m_SelectedDataset].toUtf8().constData(), m_Handler3D->ActiveSlice());
 	}
 	else if (m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".nii"), Qt::CaseInsensitive) ||
 					 m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".hdr"), Qt::CaseInsensitive) ||
 					 m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".img"), Qt::CaseInsensitive) ||
 					 m_DatasetFilepaths[m_SelectedDataset].endsWith(QString(".nii.gz"), Qt::CaseInsensitive))
 	{
-		ok = m_Handler3D->ReadOverlay(m_DatasetFilepaths[m_SelectedDataset], m_Handler3D->ActiveSlice());
+		ok = m_Handler3D->ReadOverlay(m_DatasetFilepaths[m_SelectedDataset].toUtf8().constData(), m_Handler3D->ActiveSlice());
 	}
 
 	if (!ok)
@@ -1697,8 +1705,8 @@ BitsStackPushdialog::BitsStackPushdialog(QWidget* parent, Qt::WindowFlags wFlags
 	m_RbCurrentslice = new QRadioButton("Current slice");
 	m_RbMultislices = new QRadioButton("Slice range");
 	m_Slicegroup = new QButtonGroup(this);
-	m_Slicegroup->insert(m_RbCurrentslice);
-	m_Slicegroup->insert(m_RbMultislices);
+	m_Slicegroup->addButton(m_RbCurrentslice);
+	m_Slicegroup->addButton(m_RbMultislices);
 	m_RbCurrentslice->setChecked(TRUE);
 
 	m_LeStartslice = new QLineEdit("");
@@ -1888,8 +1896,8 @@ ImageMath::ImageMath(SlicesHandler* hand3D, QWidget* parent, Qt::WindowFlags wFl
 	m_Imgorval = new QButtonGroup(this);
 	m_RbImg = new QRadioButton("Image");
 	m_RbVal = new QRadioButton("Value");
-	m_Imgorval->insert(m_RbImg);
-	m_Imgorval->insert(m_RbVal);
+	m_Imgorval->addButton(m_RbImg);
+	m_Imgorval->addButton(m_RbVal);
 	m_RbImg->setChecked(true);
 
 	m_LeVal = new QLineEdit(QString::number(0));

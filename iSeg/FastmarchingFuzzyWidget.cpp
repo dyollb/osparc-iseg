@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -18,11 +18,11 @@
 #include "Interface/LayoutTools.h"
 
 #include <QFormLayout>
-#include <QStackedLayout>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSlider>
 #include <QSpinBox>
+#include <QStackedLayout>
 
 namespace iseg {
 
@@ -99,20 +99,28 @@ FastmarchingFuzzyWidget::FastmarchingFuzzyWidget(SlicesHandler* hand3D)
 	m_RbSlider->setToolTip(Format("Increase or decrease the region size."));
 
 	auto bg_interact = new QButtonGroup(this);
-	bg_interact->insert(m_RbDrag);
-	bg_interact->insert(m_RbSlider);
+	bg_interact->addButton(m_RbDrag);
+	bg_interact->addButton(m_RbSlider);
 
 	m_SlExtend = new QSlider(Qt::Horizontal, nullptr);
 	m_SlExtend->setRange(0, 200);
 	m_SlExtend->setValue(0);
 
-	m_SbThresh = new QSpinBox(10, 100, 10, nullptr);
+	m_SbThresh = new QSpinBox(nullptr);
+	m_SbThresh->setRange(10, 100);
+	m_SbThresh->setSingleStep(10);
 	m_SbThresh->setValue(30);
-	m_SbM1 = new QSpinBox(50, 1000, 50, nullptr);
+	m_SbM1 = new QSpinBox(nullptr);
+	m_SbM1->setRange(50, 1000);
+	m_SbM1->setSingleStep(50);
 	m_SbM1->setValue(200);
-	m_SbS1 = new QSpinBox(50, 500, 50, nullptr);
+	m_SbS1 = new QSpinBox(nullptr);
+	m_SbS1->setRange(50, 500);
+	m_SbS1->setSingleStep(50);
 	m_SbS1->setValue(100);
-	m_SbS2 = new QSpinBox(10, 200, 10, nullptr);
+	m_SbS2 = new QSpinBox(nullptr);
+	m_SbS2->setRange(10, 200);
+	m_SbS2->setSingleStep(10);
 	m_SbS2->setValue(100);
 
 	// layout
@@ -547,8 +555,7 @@ void FastmarchingFuzzyWidget::SpinboxChanged()
 	{
 		m_SlS2->setValue(int(m_S2 * 100 / m_SbS2->value()));
 	}
-
-	}
+}
 
 void FastmarchingFuzzyWidget::SliderChanged()
 {

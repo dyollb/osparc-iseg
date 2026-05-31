@@ -81,6 +81,7 @@
 #include <QToolButton>
 #include <QToolTip>
 
+#include <QCloseEvent>
 #include <QScrollArea>
 #include <QScrollBar>
 
@@ -127,7 +128,7 @@ QString TruncateFileName(QString str)
 {
 	if (str != "")
 	{
-		int pos = str.findRev('/', -2);
+		int pos = str.lastIndexOf('/', -2);
 		if (pos != -1 && (int)str.length() > pos + 1)
 		{
 			QString name1 = str.right(str.length() - pos - 1);
@@ -411,7 +412,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_SlBrightnessbmp = new QSlider(Qt::Horizontal, this);
 	m_SlBrightnessbmp->setRange(0, 100);
 	m_LbContrastbmp = new QLabel("C:", this);
-	m_LbContrastbmp->setPixmap(QIcon(m_MPicpath.absoluteFilePath("icon-contrast.png")).pixmap());
+	m_LbContrastbmp->setPixmap(QPixmap(m_MPicpath.absoluteFilePath("icon-contrast.png")));
 	m_LeContrastbmpVal = new QLineEdit(this);
 	m_LeContrastbmpVal->setAlignment(Qt::AlignRight);
 	m_LeContrastbmpVal->setText(QString("%1").arg(9999.99, 6, 'f', 2));
@@ -421,7 +422,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_LeContrastbmpVal->setFixedSize(rect.width() + 4, rect.height() + 4);
 	m_LbContrastbmpVal = new QLabel("x", this);
 	m_LbBrightnessbmp = new QLabel("B:", this);
-	m_LbBrightnessbmp->setPixmap(QIcon(m_MPicpath.absoluteFilePath("icon-brightness.png")).pixmap());
+	m_LbBrightnessbmp->setPixmap(QPixmap(m_MPicpath.absoluteFilePath("icon-brightness.png")));
 	m_LeBrightnessbmpVal = new QLineEdit(this);
 	m_LeBrightnessbmpVal->setAlignment(Qt::AlignRight);
 	m_LeBrightnessbmpVal->setText(QString("%1").arg(9999, 3));
@@ -451,7 +452,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_SlBrightnesswork = new QSlider(Qt::Horizontal, this);
 	m_SlBrightnesswork->setRange(0, 100);
 	m_LbContrastwork = new QLabel(this);
-	m_LbContrastwork->setPixmap(QIcon(m_MPicpath.absoluteFilePath("icon-contrast.png")).pixmap());
+	m_LbContrastwork->setPixmap(QPixmap(m_MPicpath.absoluteFilePath("icon-contrast.png")));
 	m_LeContrastworkVal = new QLineEdit(this);
 	m_LeContrastworkVal->setAlignment(Qt::AlignRight);
 	m_LeContrastworkVal->setText(QString("%1").arg(9999.99, 6, 'f', 2));
@@ -461,7 +462,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_LeContrastworkVal->setFixedSize(rect.width() + 4, rect.height() + 4);
 	m_LbContrastworkVal = new QLabel("x", this);
 	m_LbBrightnesswork = new QLabel(this);
-	m_LbBrightnesswork->setPixmap(QIcon(m_MPicpath.absoluteFilePath("icon-brightness.png")).pixmap());
+	m_LbBrightnesswork->setPixmap(QPixmap(m_MPicpath.absoluteFilePath("icon-brightness.png")));
 	m_LeBrightnessworkVal = new QLineEdit(this);
 	m_LeBrightnessworkVal->setAlignment(Qt::AlignRight);
 	m_LeBrightnessworkVal->setText(QString("%1").arg(9999, 3));
@@ -487,14 +488,14 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_TissueTreeWidget = new TissueTreeWidget(m_Handler3D->GetTissueHierachy(), m_MPicpath, this);
 	m_TissueTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	m_TissueFilter = new QLineEdit(this);
-	m_TissueFilter->setMargin(1);
+	m_TissueFilter->setTextMargins(1, 0, 1, 0);
 	m_TissueHierarchyWidget = new TissueHierarchyWidget(m_TissueTreeWidget, this);
 	m_TissueTreeWidget->UpdateTreeWidget(); // Reload hierarchy
 	m_CbTissuelock = new QCheckBox(this);
-	m_CbTissuelock->setPixmap(QIcon(m_MPicpath.absoluteFilePath("lock.png")).pixmap());
+	m_CbTissuelock->setIcon(QIcon(m_MPicpath.absoluteFilePath("lock.png")));
 	m_CbTissuelock->setChecked(false);
 	m_LockTissues = new QPushButton("All", this);
-	m_LockTissues->setToggleButton(true);
+	m_LockTissues->setCheckable(true);
 	m_LockTissues->setFixedWidth(50);
 	m_AddTissue = new QPushButton("New Tissue...", this);
 	m_AddFolder = new QPushButton("New Folder...", this);
@@ -536,18 +537,18 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_CbAddsubconn->setToolTip(Format("Only the connected image region is added/removed."));
 
 	m_PbAdd = new QPushButton("+", this);
-	m_PbAdd->setToggleButton(true);
+	m_PbAdd->setCheckable(true);
 	m_PbAdd->setToolTip(Format("Adds next selected/picked Target image region to current tissue."));
 	m_PbSub = new QPushButton("-", this);
-	m_PbSub->setToggleButton(true);
+	m_PbSub->setCheckable(true);
 	m_PbSub->setToolTip(Format("Removes next selected/picked Target image "
 														 "region from current tissue."));
 	m_PbAddhold = new QPushButton("++", this);
-	m_PbAddhold->setToggleButton(true);
+	m_PbAddhold->setCheckable(true);
 	m_PbAddhold->setToolTip(Format("Adds selected/picked Target image regions to current tissue."));
 
 	m_PbSubhold = new QPushButton("--", this);
-	m_PbSubhold->setToggleButton(true);
+	m_PbSubhold->setCheckable(true);
 	m_PbSubhold->setToolTip(Format("Removes selected/picked Target image regions from current tissue."));
 
 	m_PbAdd->setFixedWidth(50);
@@ -575,12 +576,16 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_ScbSlicenr->setMinimumWidth(350);
 	m_ScbSlicenr->setValue(static_cast<int>(slicenr));
 	m_PbLast = new QPushButton(">>|", this);
-	m_SbSlicenr = new QSpinBox(1, (int)m_Handler3D->NumSlices(), 1, this);
+	m_SbSlicenr = new QSpinBox(this);
+	m_SbSlicenr->setRange(1, (int)m_Handler3D->NumSlices());
+	m_SbSlicenr->setSingleStep(1);
 	m_SbSlicenr->setValue(slicenr);
 	m_LbSlicenr = new QLabel(QString(" of ") + QString::number((int)m_Handler3D->NumSlices()), this);
 
 	m_LbStride = new QLabel(QString("Stride: "));
-	m_SbStride = new QSpinBox(1, 1000, 1, this);
+	m_SbStride = new QSpinBox(this);
+	m_SbStride->setRange(1, 1000);
+	m_SbStride->setSingleStep(1);
 	m_SbStride->setValue(1);
 
 	m_LbInactivewarning = new QLabel("  3D Inactive Slice!  ", this);
@@ -647,7 +652,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 		m_ShowpbTab[i] = true;
 
 		m_PbTab[i] = new QPushButton(this);
-		m_PbTab[i]->setToggleButton(true);
+		m_PbTab[i]->setCheckable(true);
 		m_PbTab[i]->setStyleSheet("text-align: left");
 		m_PbTab[i]->setMaximumHeight(20);
 	}
@@ -2853,7 +2858,8 @@ void MainWindow::LoadSettings(const std::string& loadfilename)
 	ExecuteShowtabtoggled(flag);
 
 	fp = TissueInfos::LoadTissues(fp, tissues_version);
-	const char* default_tissues_filename = m_MTmppath.absoluteFilePath("def_tissues.txt");
+	const QByteArray default_tissues_filename_ba = m_MTmppath.absoluteFilePath("def_tissues.txt").toUtf8();
+	const char* default_tissues_filename = default_tissues_filename_ba.constData();
 	FILE* fp_tmp = fopen(default_tissues_filename, "r");
 	if (fp_tmp != nullptr || TissueInfos::GetTissueCount() <= 0)
 	{
@@ -3441,7 +3447,7 @@ void MainWindow::ExecuteLoadproj4()
 void MainWindow::ExecuteLoadatlas(int i)
 {
 	AtlasWidget* aw = new AtlasWidget(
-			m_MAtlasfilename.m_MAtlasdir.absoluteFilePath(m_MAtlasfilename.m_MAtlasfilename[i]),
+			m_MAtlasfilename.m_MAtlasdir.absoluteFilePath(m_MAtlasfilename.m_MAtlasfilename[i]).toUtf8().constData(),
 			m_MPicpath);
 	if (aw->m_IsOk)
 	{
@@ -3747,7 +3753,7 @@ void MainWindow::ExecuteExportxmlregionextent()
 	QString relfilename = "";
 	if (!m_MSaveprojfilename.isEmpty())
 		relfilename = m_MSaveprojfilename.right(m_MSaveprojfilename.length() -
-																						m_MSaveprojfilename.findRev("/") - 1);
+																						m_MSaveprojfilename.lastIndexOf("/") - 1);
 
 	if (!savefilename.isEmpty())
 	{
@@ -3771,7 +3777,7 @@ void MainWindow::ExecuteExporttissueindex()
 
 	QString relfilename = "";
 	if (!m_MSaveprojfilename.isEmpty())
-		relfilename = m_MSaveprojfilename.right(m_MSaveprojfilename.length() - m_MSaveprojfilename.findRev("/") - 1);
+		relfilename = m_MSaveprojfilename.right(m_MSaveprojfilename.length() - m_MSaveprojfilename.lastIndexOf("/") - 1);
 
 	if (!savefilename.isEmpty())
 	{
@@ -3877,12 +3883,12 @@ void MainWindow::ExecuteLoadTissues()
 
 void MainWindow::ExecuteSettissuesasdef()
 {
-	TissueInfos::SaveDefaultTissueList(m_MTmppath.absoluteFilePath("def_tissues.txt"));
+	TissueInfos::SaveDefaultTissueList(m_MTmppath.absoluteFilePath("def_tissues.txt").toUtf8().constData());
 }
 
 void MainWindow::ExecuteRemovedeftissues()
 {
-	remove(m_MTmppath.absoluteFilePath("def_tissues.txt"));
+	QFile::remove(m_MTmppath.absoluteFilePath("def_tissues.txt"));
 }
 
 void MainWindow::ExecuteNew()
@@ -4842,7 +4848,7 @@ void MainWindow::AddholdTissueClicked(Point p)
 	tissues_size_t curr_tissue_type = m_TissueTreeWidget->GetCurrentType();
 	if (m_CbAddsub3d->isChecked())
 	{
-		QApplication::setOverrideCursor(QCursor(Qt::waitCursor));
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 		if (m_CbAddsubconn->isChecked())
 			m_Handler3D->Add2tissueallConnected(curr_tissue_type, p, m_CbAddsuboverride->isChecked());
 		else
@@ -5719,10 +5725,10 @@ void MainWindow::Slices3dChanged(bool new_bitstack)
 	if (m_Handler3D->NumSlices() != m_Nrslices)
 	{
 		QObject_disconnect(m_ScbSlicenr, SIGNAL(valueChanged(int)), this, SLOT(ScbSlicenrChanged()));
-		m_ScbSlicenr->setMaxValue((int)m_Handler3D->NumSlices());
+		m_ScbSlicenr->setMaximum((int)m_Handler3D->NumSlices());
 		QObject_connect(m_ScbSlicenr, SIGNAL(valueChanged(int)), this, SLOT(ScbSlicenrChanged()));
 		QObject_disconnect(m_SbSlicenr, SIGNAL(valueChanged(int)), this, SLOT(SbSlicenrChanged()));
-		m_SbSlicenr->setMaxValue((int)m_Handler3D->NumSlices());
+		m_SbSlicenr->setMaximum((int)m_Handler3D->NumSlices());
 		QObject_connect(m_SbSlicenr, SIGNAL(valueChanged(int)), this, SLOT(SbSlicenrChanged()));
 		m_LbSlicenr->setText(QString(" of ") +
 												 QString::number((int)m_Handler3D->NumSlices()));
@@ -6224,7 +6230,7 @@ void MainWindow::UpdateTabvisibility()
 	{
 		if (m_ShowpbTab[i])
 		{
-			m_PbTab[counter1]->setIconSet(m_Tabwidgets[i]->GetIcon(m_MPicpath));
+			m_PbTab[counter1]->setIcon(m_Tabwidgets[i]->GetIcon(m_MPicpath));
 			m_PbTab[counter1]->setText(m_Tabwidgets[i]->GetName().c_str());
 			m_PbTab[counter1]->setToolTip(m_Tabwidgets[i]->toolTip());
 			m_PbTab[counter1]->show();
@@ -6340,7 +6346,7 @@ void MainWindow::AddLoadProj(const QString& path1)
 	{
 		if (m_MLoadprojfilename.m_RecentProjectFileNames[i] != "")
 		{
-			const int pos = m_MLoadprojfilename.m_RecentProjectFileNames[i].findRev('/', -2);
+			const int pos = m_MLoadprojfilename.m_RecentProjectFileNames[i].lastIndexOf('/', -2);
 			if (pos != -1 && (int)m_MLoadprojfilename.m_RecentProjectFileNames[i].length() > pos + 1)
 			{
 				QString recent_filename = m_MLoadprojfilename.m_RecentProjectFileNames[i].right(m_MLoadprojfilename.m_RecentProjectFileNames[i].length() - pos - 1);

@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -65,7 +65,9 @@ LivewireWidget::LivewireWidget(SlicesHandler* hand3D)
 	m_CbFreezing = new QCheckBox;
 	m_CbFreezing->setToolTip(Format("Specify the number of seconds after which a line segment is "
 																	"frozen even without mouse click if it has not changed."));
-	m_SbFreezing = new QSpinBox(1, 10, 1, nullptr);
+	m_SbFreezing = new QSpinBox(nullptr);
+	m_SbFreezing->setRange(1, 10);
+	m_SbFreezing->setSingleStep(1);
 	m_SbFreezing->setValue(3);
 
 	m_CbClosing = new QCheckBox;

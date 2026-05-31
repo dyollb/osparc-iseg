@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -16,9 +16,9 @@
 
 #include <vtkMath.h>
 
+#include <QApplication>
 #include <QDoubleValidator>
 #include <QFormLayout>
-#include <QApplication>
 #include <QLabel>
 #include <QPushButton>
 #include <QString>
@@ -426,7 +426,7 @@ ResizeDialog::ResizeDialog(SlicesHandler* hand3D, eResizeType type1, QWidget* pa
 	unsigned short source_height = hand3D->Height();
 	float* data = hand3D->ReturnBmp(active_slice);
 
-	QImage small_image(source_width, source_height, 32);
+	QImage small_image(source_width, source_height, QImage::Format_RGB32);
 	small_image.fill(QColor(Qt::white).rgb());
 	int pos = 0;
 	int f;

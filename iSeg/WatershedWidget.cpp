@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -39,7 +39,9 @@ WatershedWidget::WatershedWidget(SlicesHandler* hand3D)
 	m_SlH->setRange(0, 200);
 	m_SlH->setValue(160);
 
-	m_SbH = new QSpinBox(10, 100, 10, nullptr);
+	m_SbH = new QSpinBox(nullptr);
+	m_SbH->setRange(10, 100);
+	m_SbH->setSingleStep(10);
 	m_SbH->setValue(40);
 	m_SbhOld = m_SbH->value();
 
