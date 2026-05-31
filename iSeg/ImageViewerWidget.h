@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -49,6 +49,7 @@ public:
 
 	void SetIsBmp(bool isBmpOrNot) { m_IsBmp = isBmpOrNot; }
 	void SetMousePosZoom(QPoint point) { m_MousePosZoom = point; }
+	QPoint GetMousePosZoom() const { return m_MousePosZoom; }
 
 protected:
 	void paintEvent(QPaintEvent* e) override;
@@ -82,7 +83,6 @@ signals:
 	void WheelrotatedSign(int delta);
 	void WheelrotatedctrlSign(int delta);
 	void ScaleoffsetfactorChanged(float scaleoffset1, float scalefactor1, bool bmporwork1);
-	void SetcenterSign(int x, int y);
 	void MousePosZoomSign(QPoint mousePosZoom);
 
 private:
