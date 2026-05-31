@@ -81,7 +81,8 @@
 #include <QToolButton>
 #include <QToolTip>
 
-#include <Q3ScrollView>
+#include <QScrollArea>
+#include <QScrollBar>
 
 #include <algorithm>
 
@@ -403,7 +404,8 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	m_BmpShow = new ImageViewerWidget(this);
 	m_LbSource = new QLabel("Source", this);
 	m_LbTarget = new QLabel("Target", this);
-	m_BmpScroller = new Q3ScrollView(this);
+	m_BmpScroller = new QScrollArea(this);
+	m_BmpScroller->setWidgetResizable(false);
 	m_SlContrastbmp = new QSlider(Qt::Horizontal, this);
 	m_SlContrastbmp->setRange(0, 100);
 	m_SlBrightnessbmp = new QSlider(Qt::Horizontal, this);
@@ -428,7 +430,7 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	rect = fm.boundingRect(text);
 	m_LeBrightnessbmpVal->setFixedSize(rect.width() + 4, rect.height() + 4);
 	m_LbBrightnessbmpVal = new QLabel("%", this);
-	m_BmpScroller->addChild(m_BmpShow);
+	m_BmpScroller->setWidget(m_BmpShow);
 	m_BmpShow->Init(m_Handler3D, TRUE);
 	m_BmpShow->SetWorkbordervisible(TRUE);
 	m_BmpShow->SetIsBmp(true);
@@ -468,8 +470,9 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 	rect = fm.boundingRect(text);
 	m_LeBrightnessworkVal->setFixedSize(rect.width() + 4, rect.height() + 4);
 	m_LbBrightnessworkVal = new QLabel("%", this);
-	m_WorkScroller = new Q3ScrollView(this);
-	m_WorkScroller->addChild(m_WorkShow);
+	m_WorkScroller = new QScrollArea(this);
+	m_WorkScroller->setWidgetResizable(false);
+	m_WorkScroller->setWidget(m_WorkShow);
 
 	m_WorkShow->Init(m_Handler3D, FALSE);
 	m_WorkShow->SetTissuevisible(false); //toggle_tissuevisible();
@@ -1407,10 +1410,12 @@ MainWindow::MainWindow(SlicesHandler* hand3D, const QString& locationstring, con
 
 	QObject_connect(m_PbMask, SIGNAL(clicked()), this, SLOT(MaskSource()));
 
-	QObject_connect(m_BmpScroller, SIGNAL(contentsMoving(int, int)), this, SLOT(SetWorkContentsPos(int, int)));
-	QObject_connect(m_WorkScroller, SIGNAL(contentsMoving(int, int)), this, SLOT(SetBmpContentsPos(int, int)));
-	QObject_connect(m_BmpShow, SIGNAL(SetcenterSign(int, int)), m_BmpScroller, SLOT(center(int, int)));
-	QObject_connect(m_WorkShow, SIGNAL(SetcenterSign(int, int)), m_WorkScroller, SLOT(center(int, int)));
+	QObject_connect(m_BmpScroller->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetWorkContentsPos(int)));
+	QObject_connect(m_BmpScroller->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetWorkContentsPos(int)));
+	QObject_connect(m_WorkScroller->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetBmpContentsPos(int)));
+	QObject_connect(m_WorkScroller->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(SetBmpContentsPos(int)));
+	QObject_connect(m_BmpShow, SIGNAL(SetcenterSign(int, int)), this, SLOT(CenterBmpScroller(int, int)));
+	QObject_connect(m_WorkShow, SIGNAL(SetcenterSign(int, int)), this, SLOT(CenterWorkScroller(int, int)));
 	m_TomoveScroller = true;
 
 	QObject_connect(m_ZoomWidget, SIGNAL(SetZoom(double)), m_BmpShow, SLOT(SetZoom(double)));
@@ -4126,30 +4131,44 @@ void MainWindow::YshowerSlicechanged()
 	m_WorkShow->CrosshairxChanged(m_Ysliceshower->GetSlicenr());
 }
 
-void MainWindow::SetWorkContentsPos(int x, int y)
+void MainWindow::SetWorkContentsPos(int /*val*/)
 {
 	if (m_TomoveScroller)
 	{
 		m_TomoveScroller = false;
-		m_WorkScroller->setContentsPos(x, y);
-	}
-	else
-	{
+		m_WorkScroller->horizontalScrollBar()->blockSignals(true);
+		m_WorkScroller->verticalScrollBar()->blockSignals(true);
+		m_WorkScroller->horizontalScrollBar()->setValue(m_BmpScroller->horizontalScrollBar()->value());
+		m_WorkScroller->verticalScrollBar()->setValue(m_BmpScroller->verticalScrollBar()->value());
+		m_WorkScroller->horizontalScrollBar()->blockSignals(false);
+		m_WorkScroller->verticalScrollBar()->blockSignals(false);
 		m_TomoveScroller = true;
 	}
 }
 
-void MainWindow::SetBmpContentsPos(int x, int y)
+void MainWindow::SetBmpContentsPos(int /*val*/)
 {
 	if (m_TomoveScroller)
 	{
 		m_TomoveScroller = false;
-		m_BmpScroller->setContentsPos(x, y);
-	}
-	else
-	{
+		m_BmpScroller->horizontalScrollBar()->blockSignals(true);
+		m_BmpScroller->verticalScrollBar()->blockSignals(true);
+		m_BmpScroller->horizontalScrollBar()->setValue(m_WorkScroller->horizontalScrollBar()->value());
+		m_BmpScroller->verticalScrollBar()->setValue(m_WorkScroller->verticalScrollBar()->value());
+		m_BmpScroller->horizontalScrollBar()->blockSignals(false);
+		m_BmpScroller->verticalScrollBar()->blockSignals(false);
 		m_TomoveScroller = true;
 	}
+}
+
+void MainWindow::CenterBmpScroller(int x, int y)
+{
+	m_BmpScroller->ensureVisible(x, y);
+}
+
+void MainWindow::CenterWorkScroller(int x, int y)
+{
+	m_WorkScroller->ensureVisible(x, y);
 }
 
 void MainWindow::ExecuteHisto()
