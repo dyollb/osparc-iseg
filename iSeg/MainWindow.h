@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -15,9 +15,9 @@
 #include "Data/DataSelection.h"
 #include "Data/Point.h"
 
+#include <QDir>
 #include <QMainWindow>
 #include <QMenu>
-#include <QDir>
 
 class QAction;
 class QCheckBox;
@@ -38,7 +38,7 @@ class QVBoxLayout;
 class QWidget;
 
 class QScrollBar;
-class Q3ScrollView;
+class QScrollArea;
 
 class QLogTable;
 
@@ -270,8 +270,8 @@ private:
 
 	QLabel* m_LbSource;
 	QLabel* m_LbTarget;
-	Q3ScrollView* m_BmpScroller = nullptr;
-	Q3ScrollView* m_WorkScroller = nullptr;
+	QScrollArea* m_BmpScroller = nullptr;
+	QScrollArea* m_WorkScroller = nullptr;
 	bool m_TomoveScroller;
 	ZoomWidget* m_ZoomWidget = nullptr;
 	//	float thickness;
@@ -334,11 +334,11 @@ private slots:
 	void ExecuteSaveContours();
 	void ExecuteLoaddicom();
 	void ExecuteLoadImageSeries();
-	void ExecuteLoadraw(const QString& file_name=QString());
+	void ExecuteLoadraw(const QString& file_name = QString());
 	void ExecuteLoadavw();
-	void ExecuteLoadMedicalImage(const QString& file_name=QString());
+	void ExecuteLoadMedicalImage(const QString& file_name = QString());
 
-	void ExecuteLoadvtk(const QString& file_name=QString());
+	void ExecuteLoadvtk(const QString& file_name = QString());
 	void ExecuteReloaddicom();
 	void ExecuteReloadbmp();
 	void ExecuteReloadraw();
@@ -501,8 +501,10 @@ private slots:
 	void VV3DbmpClosed();
 	void XshowerSlicechanged();
 	void YshowerSlicechanged();
-	void SetBmpContentsPos(int x, int y);
-	void SetWorkContentsPos(int x, int y);
+	void SetBmpContentsPos(int val);
+	void SetWorkContentsPos(int val);
+	void CenterBmpScroller(int x, int y);
+	void CenterWorkScroller(int x, int y);
 	void TissuenrChanged(int);
 	void TissueSelectionChanged();
 	void TreeWidgetDoubleclicked(QTreeWidgetItem* item, int column);
