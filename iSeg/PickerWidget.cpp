@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -43,8 +43,8 @@ PickerWidget::PickerWidget(SlicesHandler* hand3D)
 	m_RbWork = new QRadioButton(tr("Target"));
 	m_RbTissue = new QRadioButton(tr("Tissue"));
 	auto worktissuegroup = new QButtonGroup(this);
-	worktissuegroup->insert(m_RbWork);
-	worktissuegroup->insert(m_RbTissue);
+	worktissuegroup->addButton(m_RbWork);
+	worktissuegroup->addButton(m_RbTissue);
 	m_RbTissue->setChecked(true);
 
 	m_RbErase = new QRadioButton(tr("Erase"));
@@ -53,8 +53,8 @@ PickerWidget::PickerWidget(SlicesHandler* hand3D)
 	m_RbFill->setToolTip(Format("Fill the resulting hole based on the neighboring regions."));
 
 	auto erasefillgroup = new QButtonGroup(this);
-	erasefillgroup->insert(m_RbErase);
-	erasefillgroup->insert(m_RbFill);
+	erasefillgroup->addButton(m_RbErase);
+	erasefillgroup->addButton(m_RbFill);
 	m_RbErase->setChecked(true);
 
 	m_PbCopy = new QPushButton("Copy");

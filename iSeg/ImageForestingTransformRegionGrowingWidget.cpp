@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -47,7 +47,7 @@ ImageForestingTransformRegionGrowingWidget::ImageForestingTransformRegionGrowing
 
 	m_Pushclear = new QPushButton("Clear Lines");
 	m_Pushremove = new QPushButton("Remove Line");
-	m_Pushremove->setToggleButton(true);
+	m_Pushremove->setCheckable(true);
 	m_Pushremove->setToolTip(Format("Remove Line followed by a click on a line deletes "
 																	"this line and automatically updates the segmentation. If Remove "
 																	"Line has "

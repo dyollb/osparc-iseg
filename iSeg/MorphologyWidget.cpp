@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -42,10 +42,10 @@ MorphologyWidget::MorphologyWidget(SlicesHandler* hand3D)
 
 	// methods
 	auto modegroup = new QButtonGroup(this);
-	modegroup->insert(m_RbOpen = new QRadioButton(QString("Open")));
-	modegroup->insert(m_RbClose = new QRadioButton(QString("Close")));
-	modegroup->insert(m_RbErode = new QRadioButton(QString("Erode")));
-	modegroup->insert(m_RbDilate = new QRadioButton(QString("Dilate")));
+	modegroup->addButton(m_RbOpen = new QRadioButton(QString("Open")));
+	modegroup->addButton(m_RbClose = new QRadioButton(QString("Close")));
+	modegroup->addButton(m_RbErode = new QRadioButton(QString("Erode")));
+	modegroup->addButton(m_RbDilate = new QRadioButton(QString("Dilate")));
 	m_RbOpen->setChecked(true);
 
 	m_RbOpen->setToolTip(Format("First shrinking before growing is called Open and results in the "

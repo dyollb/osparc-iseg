@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -23,10 +23,14 @@ ActiveSlicesConfigDialog::ActiveSlicesConfigDialog(SlicesHandler* hand3D, QWidge
 {
 	setModal(true);
 
-	m_SbStart = new QSpinBox(1, (int)m_Handler3D->NumSlices(), 1, nullptr);
+	m_SbStart = new QSpinBox(nullptr);
+	m_SbStart->setRange(1, (int)m_Handler3D->NumSlices());
+	m_SbStart->setSingleStep(1);
 	m_SbStart->setValue((int)m_Handler3D->StartSlice() + 1);
 
-	m_SbEnd = new QSpinBox(1, (int)m_Handler3D->NumSlices(), 1, nullptr);
+	m_SbEnd = new QSpinBox(nullptr);
+	m_SbEnd->setRange(1, (int)m_Handler3D->NumSlices());
+	m_SbEnd->setSingleStep(1);
 	m_SbEnd->setValue((int)m_Handler3D->EndSlice());
 
 	m_PbOk = new QPushButton("OK");

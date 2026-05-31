@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -62,9 +62,9 @@ AtlasWidget::AtlasWidget(const char* filename, QDir picpath, QWidget* parent, Qt
 	m_SlBrightness->setRange(0, 100);
 	m_SlBrightness->setValue(50);
 	m_LbContrast = new QLabel("C:", this);
-	m_LbContrast->setPixmap(QIcon(m_MPicpath.absoluteFilePath("icon-contrast.png")).pixmap());
+	m_LbContrast->setPixmap(QPixmap(m_MPicpath.absoluteFilePath("icon-contrast.png")));
 	m_LbBrightness = new QLabel("B:", this);
-	m_LbBrightness->setPixmap(QIcon(m_MPicpath.absoluteFilePath("icon-brightness.png")).pixmap());
+	m_LbBrightness->setPixmap(QPixmap(m_MPicpath.absoluteFilePath("icon-brightness.png")));
 	hbox1->addWidget(m_LbContrast);
 	hbox1->addWidget(m_SlContrast);
 	hbox1->addWidget(m_LbBrightness);
@@ -77,7 +77,10 @@ AtlasWidget::AtlasWidget(const char* filename, QDir picpath, QWidget* parent, Qt
 	m_AtlasViewer = new AtlasViewer(m_Image, m_Tissue, 2, m_Dimx, m_Dimy, m_Dimz, m_Dx, m_Dy, m_Dz, &m_ColorR, &m_ColorG, &m_ColorB, this);
 	m_SaViewer->setWidget(m_AtlasViewer);
 	vbox1->addWidget(m_SaViewer);
-	m_ScbSlicenr = new QScrollBar(0, m_Dimz - 1, 1, 5, 0, Qt::Horizontal, this);
+	m_ScbSlicenr = new QScrollBar(Qt::Horizontal, this);
+	m_ScbSlicenr->setRange(0, m_Dimz - 1);
+	m_ScbSlicenr->setPageStep(5);
+	m_ScbSlicenr->setValue(0);
 	vbox1->addWidget(m_ScbSlicenr);
 
 	m_BgOrient = new QButtonGroup(this);
@@ -85,9 +88,9 @@ AtlasWidget::AtlasWidget(const char* filename, QDir picpath, QWidget* parent, Qt
 	m_RbX = new QRadioButton(QString("x"), this);
 	m_RbY = new QRadioButton(QString("y"), this);
 	m_RbZ = new QRadioButton(QString("z"), this);
-	m_BgOrient->insert(m_RbX);
-	m_BgOrient->insert(m_RbY);
-	m_BgOrient->insert(m_RbZ);
+	m_BgOrient->addButton(m_RbX);
+	m_BgOrient->addButton(m_RbY);
+	m_BgOrient->addButton(m_RbZ);
 	m_RbZ->setChecked(TRUE);
 	hbox2->addWidget(m_RbX);
 	hbox2->addWidget(m_RbY);
@@ -281,17 +284,17 @@ void AtlasWidget::XyzChanged()
 	m_ScbSlicenr->setValue(0);
 	if (m_RbX->isChecked())
 	{
-		m_ScbSlicenr->setMaxValue(m_Dimx - 1);
+		m_ScbSlicenr->setMaximum(m_Dimx - 1);
 		m_AtlasViewer->OrientChanged(0);
 	}
 	else if (m_RbY->isChecked())
 	{
-		m_ScbSlicenr->setMaxValue(m_Dimy - 1);
+		m_ScbSlicenr->setMaximum(m_Dimy - 1);
 		m_AtlasViewer->OrientChanged(1);
 	}
 	else if (m_RbZ->isChecked())
 	{
-		m_ScbSlicenr->setMaxValue(m_Dimz - 1);
+		m_ScbSlicenr->setMaximum(m_Dimz - 1);
 		m_AtlasViewer->OrientChanged(2);
 	}
 }

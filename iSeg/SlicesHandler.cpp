@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -667,9 +667,9 @@ int SlicesHandler::ReadRawOverlay(const char* filename, unsigned bitdepth, unsig
 		// const fpos_t pos = (fpos_t)(bitsize)*2*slicenr;
 		// int result = fsetpos(fp, &pos);
 #ifdef _MSC_VER
-		int result = _fseeki64(fp, (__int64)(bitsize)*2 * slicenr, SEEK_SET);
+		int result = _fseeki64(fp, (__int64)(bitsize) * 2 * slicenr, SEEK_SET);
 #else
-		int result = fseek(fp, (size_t)(bitsize)*2 * slicenr, SEEK_SET);
+		int result = fseek(fp, (size_t)(bitsize) * 2 * slicenr, SEEK_SET);
 #endif
 		if (result)
 		{
@@ -679,7 +679,7 @@ int SlicesHandler::ReadRawOverlay(const char* filename, unsigned bitdepth, unsig
 			return 0;
 		}
 
-		if (fread(bits_tmp, 1, (size_t)(bitsize)*2, fp) < m_Area * 2)
+		if (fread(bits_tmp, 1, (size_t)(bitsize) * 2, fp) < m_Area * 2)
 		{
 			ISEG_ERROR_MSG("Bmphandler::ReadRawOverlay() : file operation failed");
 			free(bits_tmp);
@@ -1161,7 +1161,7 @@ bool SlicesHandler::SaveMarkersHDF(const char* filename, bool naked, unsigned sh
 				mark_name = QString::fromStdString("Mark_" + std::to_string(mark_counter));
 				mark_counter++;
 			}
-			mark_name.replace(QString(" "), QString("_"), true);
+			mark_name.replace(QString(" "), QString("_"));
 
 			std::string mystring =
 					std::string("/Markers/") + mark_name.toLocal8Bit().constData();
@@ -1670,7 +1670,7 @@ int SlicesHandler::ReloadRTdose(const char* filename, unsigned short slicenr)
 	rtDose->SetStudyInstanceUID("1.3.12.2.1107.5.1.4.49212.3000001201090800348430000004");
 	rtDose->SetStudyTime(studyDateTime);
 	rtDose->AddReferencedRTPlanInstanceUID(std::string("2.16.840.1.113669.2.931128.463871595.20120221120004.977868"));
-	if (!writer->Write(filename, rtDose)) 
+	if (!writer->Write(filename, rtDose))
 	{
 		ISEG_ERROR_MSG("WriteRTdose() : Write() failed");
 		return 0;
@@ -2011,7 +2011,7 @@ FILE* SlicesHandler::MergeProjects(const char* savefilename, std::vector<QString
 	unsigned short endslice1 = m_Endslice;
 	m_Startslice = 0;
 	m_Endslice = m_Nrslices;
-	QString image_file_extension = "xmf";
+	const char* image_file_extension = "xmf";
 	unsigned char length1 = 0;
 	while (image_file_extension[length1] != '\0')
 		length1++;
@@ -11158,7 +11158,9 @@ bool SlicesHandler::ComputeSplitTissues(tissues_size_t tissue, ProgressInfo* pro
 							tissues_size_t val = std::stoi(tname.substr(selected_name.length() + 1));
 							max_existing_idx = std::max(max_existing_idx, val);
 						}
-						catch (const std::exception&) {}
+						catch (const std::exception&)
+						{
+						}
 					}
 				}
 

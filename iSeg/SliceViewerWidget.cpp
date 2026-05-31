@@ -416,8 +416,8 @@ SliceViewerWidget::SliceViewerWidget(SlicesHandler* hand3D, bool direction_x, fl
 	m_RbWork = new QRadioButton("Target");
 
 	m_BgBmporwork = new QButtonGroup(this);
-	m_BgBmporwork->insert(m_RbBmp);
-	m_BgBmporwork->insert(m_RbWork);
+	m_BgBmporwork->addButton(m_RbBmp);
+	m_BgBmporwork->addButton(m_RbWork);
 	m_RbBmp->setChecked(true);
 
 	m_CbZposvisible = new QCheckBox("Show zpos");
@@ -490,7 +490,7 @@ void SliceViewerWidget::BmpChanged()
 		if (nrslicesnew != m_Nrslices)
 		{
 			m_Nrslices = nrslicesnew;
-			m_QsbSlicenr->setMaxValue((int)m_Nrslices);
+			m_QsbSlicenr->setMaximum((int)m_Nrslices);
 			m_QsbSlicenr->setValue(1);
 			m_Shower->SlicenrChanged(0);
 		}
@@ -514,7 +514,7 @@ void SliceViewerWidget::WorkChanged()
 		if (nrslicesnew != m_Nrslices)
 		{
 			m_Nrslices = nrslicesnew;
-			m_QsbSlicenr->setMaxValue((int)m_Nrslices);
+			m_QsbSlicenr->setMaximum((int)m_Nrslices);
 			m_QsbSlicenr->setValue(1);
 			m_Shower->SlicenrChanged(0);
 		}

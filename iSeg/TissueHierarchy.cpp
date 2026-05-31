@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -307,7 +307,7 @@ bool TissueHiearchy::LoadHierarchy(const QString& path)
 		return false;
 	}
 	QXmlSimpleReader xml_reader;
-	QXmlInputSource* source = new QXmlInputSource(file);
+	QXmlInputSource* source = new QXmlInputSource(&file);
 	TissueHierarchySaxHandler handler(root);
 	xml_reader.setContentHandler(&handler);
 	xml_reader.setErrorHandler(&handler);

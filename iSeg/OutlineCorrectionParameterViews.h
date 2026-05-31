@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -48,11 +48,11 @@ class OLCorrParamView : public ParamViewBase
 public:
 	OLCorrParamView(QWidget* parent = nullptr);
 
-	bool Work() const override { return m_Target->isOn(); }
+	bool Work() const override { return m_Target->isChecked(); }
 	void SetWork(bool v) override
 	{
-		m_Target->setOn(v);
-		m_Tissues->setOn(!v);
+		m_Target->setChecked(v);
+		m_Tissues->setChecked(!v);
 	}
 	float ObjectValue() const override { return m_ObjectValue->text().toFloat(); }
 	void SetObjectValue(float v) override;
@@ -71,11 +71,11 @@ class BrushParamView : public ParamViewBase
 public:
 	BrushParamView(QWidget* parent = nullptr);
 
-	bool Work() const override { return m_Target->isOn(); }
+	bool Work() const override { return m_Target->isChecked(); }
 	void SetWork(bool v) override
 	{
-		m_Target->setOn(v);
-		m_Tissues->setOn(!v);
+		m_Target->setChecked(v);
+		m_Tissues->setChecked(!v);
 	}
 	float ObjectValue() const override { return m_ObjectValue->text().toFloat(); }
 	void SetObjectValue(float v) override;
@@ -113,11 +113,11 @@ class FillHolesParamView : public ParamViewBase
 public:
 	FillHolesParamView(QWidget* parent = nullptr);
 
-	bool Work() const override { return m_Target->isOn(); }
+	bool Work() const override { return m_Target->isChecked(); }
 	void SetWork(bool v) override
 	{
-		m_Target->setOn(v);
-		m_Tissues->setOn(!v);
+		m_Target->setChecked(v);
+		m_Tissues->setChecked(!v);
 	}
 	float ObjectValue() const override { return m_ObjectValue->text().toFloat(); }
 	void SetObjectValue(float v) override;
@@ -144,11 +144,11 @@ class AddSkinParamView : public ParamViewBase
 public:
 	AddSkinParamView(QWidget* parent = nullptr);
 
-	bool Work() const override { return m_Target->isOn(); }
+	bool Work() const override { return m_Target->isChecked(); }
 	void SetWork(bool v) override
 	{
-		m_Target->setOn(v);
-		m_Tissues->setOn(!v);
+		m_Target->setChecked(v);
+		m_Tissues->setChecked(!v);
 	}
 
 	// params
@@ -217,11 +217,11 @@ class FillAllParamView : public ParamViewBase
 public:
 	FillAllParamView(QWidget* parent = nullptr);
 
-	bool Work() const override { return m_Target->isOn(); }
+	bool Work() const override { return m_Target->isChecked(); }
 	void SetWork(bool v) override
 	{
-		m_Target->setOn(v);
-		m_Tissues->setOn(!v);
+		m_Target->setChecked(v);
+		m_Tissues->setChecked(!v);
 	}
 
 	// params
@@ -239,11 +239,11 @@ class SpherizeParamView : public ParamViewBase
 public:
 	SpherizeParamView(QWidget* parent = nullptr);
 
-	bool Work() const override { return m_Target->isOn(); }
+	bool Work() const override { return m_Target->isChecked(); }
 	void SetWork(bool v) override
 	{
-		m_Target->setOn(v);
-		m_Tissues->setOn(!v);
+		m_Target->setChecked(v);
+		m_Tissues->setChecked(!v);
 	}
 	float ObjectValue() const override { return m_ObjectValue->text().toFloat(); }
 	void SetObjectValue(float v) override;

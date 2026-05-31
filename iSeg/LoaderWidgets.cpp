@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -204,8 +204,8 @@ LoaderDicom::LoaderDicom(SlicesHandler* hand3D, QStringList* lname, bool breload
 		m_BgWeight = new QButtonGroup(this);
 		m_RbBone = new QRadioButton("Bone");
 		m_RbMuscle = new QRadioButton("Muscle");
-		m_BgWeight->insert(m_RbBone);
-		m_BgWeight->insert(m_RbMuscle);
+		m_BgWeight->addButton(m_RbBone);
+		m_BgWeight->addButton(m_RbMuscle);
 		m_RbMuscle->setChecked(true);
 
 		m_CbCrop = new QCheckBox("Clamp values ");
@@ -363,8 +363,8 @@ LoaderRaw::LoaderRaw(SlicesHandler* hand3D, const QString& file_path, QWidget* p
 	m_Bit8 = new QRadioButton("8-bit");
 	m_Bit16 = new QRadioButton("16-bit");
 	m_Bitselect = new QButtonGroup(this);
-	m_Bitselect->insert(m_Bit8);
-	m_Bitselect->insert(m_Bit16);
+	m_Bitselect->addButton(m_Bit8);
+	m_Bitselect->addButton(m_Bit16);
 	m_Bit8->setChecked(true);
 
 	m_Slicenrbox = new QSpinBox;
@@ -384,7 +384,7 @@ LoaderRaw::LoaderRaw(SlicesHandler* hand3D, const QString& file_path, QWidget* p
 	m_Ylength1 = new QSpinBox;
 	m_Ylength1->setRange(0, 2000);
 	m_Ylength1->setValue(512);
-	
+
 	m_Xlength = new QSpinBox;
 	m_Xlength->setRange(0, 2000);
 	m_Xlength->setValue(256);
@@ -505,7 +505,7 @@ void LoaderRaw::LoadPushed()
 		{
 			// do nothing
 		}
-		else if (m_Subsect->isOn())
+		else if (m_Subsect->isChecked())
 		{
 			Point p;
 			p.px = m_Xoffset->value();
@@ -528,8 +528,8 @@ ReloaderRaw::ReloaderRaw(SlicesHandler* hand3D, const QString& file_path, QWidge
 	m_Bit8 = new QRadioButton("8-bit");
 	m_Bit16 = new QRadioButton("16-bit");
 	m_Bitselect = new QButtonGroup(this);
-	m_Bitselect->insert(m_Bit8);
-	m_Bitselect->insert(m_Bit16);
+	m_Bitselect->addButton(m_Bit8);
+	m_Bitselect->addButton(m_Bit16);
 	m_Bit8->setChecked(true);
 
 	m_Slicenrbox = new QSpinBox;
@@ -717,30 +717,38 @@ LoaderColorImages::LoaderColorImages(SlicesHandler* hand3D, eImageType typ, cons
 	m_Subsect->setChecked(false);
 
 	auto xoffs = new QLabel("x-Offset: ");
-	m_Xoffset = new QSpinBox(0, 2000, 1, nullptr);
+	m_Xoffset = new QSpinBox(nullptr);
+	m_Xoffset->setRange(0, 2000);
+	m_Xoffset->setSingleStep(1);
 	m_Xoffset->setValue(0);
 
 	auto yoffs = new QLabel("y-Offset: ");
-	m_Yoffset = new QSpinBox(0, 2000, 1, nullptr);
+	m_Yoffset = new QSpinBox(nullptr);
+	m_Yoffset->setRange(0, 2000);
+	m_Yoffset->setSingleStep(1);
 	m_Xoffset->setValue(0);
 
 	auto xl = new QLabel("x-Length: ");
-	m_Xlength = new QSpinBox(0, 2000, 1, nullptr);
+	m_Xlength = new QSpinBox(nullptr);
+	m_Xlength->setRange(0, 2000);
+	m_Xlength->setSingleStep(1);
 	m_Xlength->setValue(256);
 
 	auto yl = new QLabel("y-Length: ");
-	m_Ylength = new QSpinBox(0, 2000, 1, nullptr);
+	m_Ylength = new QSpinBox(nullptr);
+	m_Ylength->setRange(0, 2000);
+	m_Ylength->setSingleStep(1);
 	m_Ylength->setValue(256);
 
-	auto subsect_layout = new QGridLayout(2, 4);
-	subsect_layout->addWidget(xoffs);
-	subsect_layout->addWidget(m_Xoffset);
-	subsect_layout->addWidget(xl);
-	subsect_layout->addWidget(m_Xlength);
-	subsect_layout->addWidget(yoffs);
-	subsect_layout->addWidget(m_Yoffset);
-	subsect_layout->addWidget(yl);
-	subsect_layout->addWidget(m_Ylength);
+	auto subsect_layout = new QGridLayout();
+	subsect_layout->addWidget(xoffs, 0, 0);
+	subsect_layout->addWidget(m_Xoffset, 0, 1);
+	subsect_layout->addWidget(xl, 0, 2);
+	subsect_layout->addWidget(m_Xlength, 0, 3);
+	subsect_layout->addWidget(yoffs, 1, 0);
+	subsect_layout->addWidget(m_Yoffset, 1, 1);
+	subsect_layout->addWidget(yl, 1, 2);
+	subsect_layout->addWidget(m_Ylength, 1, 3);
 	auto subsect_options = new QWidget;
 	subsect_options->setLayout(subsect_layout);
 
@@ -1146,7 +1154,6 @@ void ChannelMixer::LabelBlueValueChanged(QString text)
 
 	ChangePreview();
 }
-
 
 void ChannelMixer::SliceValueChanged(int value)
 {

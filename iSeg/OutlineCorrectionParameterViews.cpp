@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -77,7 +77,9 @@ BrushParamView::BrushParamView(QWidget* parent /*= 0*/) : ParamViewBase(parent)
 
 	m_ShowGuide = new QCheckBox;
 	m_ShowGuide->setChecked(false);
-	m_GuideOffset = new QSpinBox(-100, 100, 1, nullptr);
+	m_GuideOffset = new QSpinBox(nullptr);
+	m_GuideOffset->setRange(-100, 100);
+	m_GuideOffset->setSingleStep(1);
 	m_GuideOffset->setValue(1);
 	m_CopyGuide = new QPushButton(QString("Copy"), nullptr);
 	m_CopyPickGuide = new QPushButton(QString("Copy Picked"), nullptr);
@@ -188,7 +190,9 @@ FillHolesParamView::FillHolesParamView(QWidget* parent /*= 0*/) : ParamViewBase(
 	m_ObjectValue = new QLineEdit(QString::number(255));
 	m_ObjectValue->setValidator(new QDoubleValidator);
 
-	m_ObjectSize = new QSpinBox(1, std::numeric_limits<int>::max(), 1, nullptr);
+	m_ObjectSize = new QSpinBox(nullptr);
+	m_ObjectSize->setRange(1, std::numeric_limits<int>::max());
+	m_ObjectSize->setSingleStep(1);
 	m_ObjectSizeLabel = new QLabel(tr("Hole size"));
 
 	m_Execute = new QPushButton(tr("Execute"));

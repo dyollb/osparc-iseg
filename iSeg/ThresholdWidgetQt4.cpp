@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -34,8 +34,7 @@ ThresholdWidgetQt4::ThresholdWidgetQt4(SlicesHandler* hand3D)
 	updateUi();
 }
 
-ThresholdWidgetQt4::~ThresholdWidgetQt4()
-= default;
+ThresholdWidgetQt4::~ThresholdWidgetQt4() = default;
 
 void ThresholdWidgetQt4::initUi()
 {
@@ -236,7 +235,7 @@ FILE* ThresholdWidgetQt4::LoadParams(FILE* fp, int version)
 		m_Ui.mHistoMinPixelsRatioHorizontalSlider->setValue(dummy);
 		fread(&dummy, sizeof(int), 1, fp);
 		m_Ui.mManualNrTissuesSpinBox->setValue(dummy);
-		m_Ui.mManualLimitNrSpinBox->setMaxValue(dummy - 1);
+		m_Ui.mManualLimitNrSpinBox->setMaximum(dummy - 1);
 		fread(&dummy, sizeof(int), 1, fp);
 		m_Ui.mKMeansDimsSpinBox->setValue(dummy);
 		fread(&dummy, sizeof(int), 1, fp);
@@ -290,7 +289,7 @@ FILE* ThresholdWidgetQt4::LoadParams(FILE* fp, int version)
 void ThresholdWidgetQt4::on_mManualNrTissuesSpinBox_valueChanged(int newValue)
 {
 	m_Threshs[0] = float(newValue - 1);
-	m_Ui.mManualLimitNrSpinBox->setMaxValue(newValue - 1);
+	m_Ui.mManualLimitNrSpinBox->setMaximum(newValue - 1);
 
 	updateUi();
 }
@@ -327,7 +326,7 @@ void ThresholdWidgetQt4::on_mLoadBordersPushButton_clicked()
 	{
 		m_Ui.mManualNrTissuesSpinBox->setValue(static_cast<int>(fvec.size() + 1));
 		m_Threshs[0] = float(fvec.size());
-		m_Ui.mManualLimitNrSpinBox->setMaxValue(static_cast<int>(fvec.size()));
+		m_Ui.mManualLimitNrSpinBox->setMaximum(static_cast<int>(fvec.size()));
 
 		auto range = get_range();
 		for (unsigned i = 0; i < (unsigned)fvec.size(); i++)
@@ -356,7 +355,7 @@ void ThresholdWidgetQt4::on_mSaveBordersPushButton_clicked()
 	if (!savefilename.isEmpty())
 	{
 		FILE* fp = fopen(savefilename.toAscii(), "w");
-		for (int i = 1; i <= m_Ui.mManualLimitNrSpinBox->maxValue(); i++)
+		for (int i = 1; i <= m_Ui.mManualLimitNrSpinBox->maximum(); i++)
 			fprintf(fp, "%f\n", m_Threshs[i]);
 		fclose(fp);
 	}
@@ -557,7 +556,7 @@ void ThresholdWidgetQt4::on_mKMeansDimsSpinBox_valueChanged(int newValue)
 			m_Filenames[i] = "";
 	}
 
-	m_Ui.mKMeansImageNrSpinBox->setMaxValue(newValue);
+	m_Ui.mKMeansImageNrSpinBox->setMaximum(newValue);
 	m_Ui.mKMeansImageNrSpinBox->setValue(1);
 
 	updateUi();
@@ -583,8 +582,7 @@ void ThresholdWidgetQt4::on_mKMeansFilenamePushButton_clicked()
 			QString(),
 			"Images (*.png)\n"
 			"Images (*.mhd)\n"
-			"All (*.*)"
-	);
+			"All (*.*)");
 	m_Ui.mKMeansFilenameLineEdit->setText(loadfilename);
 	m_Filenames[m_Ui.mKMeansImageNrSpinBox->value() - 2] = loadfilename;
 
@@ -594,7 +592,7 @@ void ThresholdWidgetQt4::on_mKMeansFilenamePushButton_clicked()
 	m_Ui.mKMeansARadioButton->setEnabled(false);
 
 	QFileInfo fi(loadfilename);
-	QString ext = fi.extension();
+	QString ext = fi.suffix();
 	if (ext == "png")
 	{
 		QImage image(loadfilename);

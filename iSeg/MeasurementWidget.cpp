@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -52,19 +52,19 @@ MeasurementWidget::MeasurementWidget(SlicesHandler* hand3D)
 	m_Rb4ptangle = new QRadioButton("4pt-Angle");
 	m_RbVol = new QRadioButton("Volume");
 	auto modegroup = new QButtonGroup(this);
-	modegroup->insert(m_RbVector);
-	modegroup->insert(m_RbDist);
-	modegroup->insert(m_RbThick);
-	modegroup->insert(m_RbAngle);
-	modegroup->insert(m_Rb4ptangle);
-	modegroup->insert(m_RbVol);
+	modegroup->addButton(m_RbVector);
+	modegroup->addButton(m_RbDist);
+	modegroup->addButton(m_RbThick);
+	modegroup->addButton(m_RbAngle);
+	modegroup->addButton(m_Rb4ptangle);
+	modegroup->addButton(m_RbVol);
 	m_RbDist->setChecked(true);
 
 	m_RbPts = new QRadioButton("Clicks");
 	m_RbLbls = new QRadioButton("Labels");
 	auto inputgroup = new QButtonGroup(this);
-	inputgroup->insert(m_RbPts);
-	inputgroup->insert(m_RbLbls);
+	inputgroup->addButton(m_RbPts);
+	inputgroup->addButton(m_RbLbls);
 	m_RbPts->setChecked(true);
 
 	m_CbbLb1 = new QComboBox;
@@ -473,14 +473,14 @@ void MeasurementWidget::CbbChanged(int)
 			pc.px = (short)m_Handler3D->Width() / 2;
 			pc.py = (short)m_Handler3D->Height() / 2;
 			Point p1, p2;
-			if (m_CbbLb1->currentItem() == 0)
+			if (m_CbbLb1->currentIndex() == 0)
 				p1 = pc;
 			else
-				p1 = m_Labels[m_CbbLb1->currentItem() - 1].p;
-			if (m_CbbLb2->currentItem() == 0)
+				p1 = m_Labels[m_CbbLb1->currentIndex() - 1].p;
+			if (m_CbbLb2->currentIndex() == 0)
 				p2 = pc;
 			else
-				p2 = m_Labels[m_CbbLb2->currentItem() - 1].p;
+				p2 = m_Labels[m_CbbLb2->currentIndex() - 1].p;
 			addLine(&m_Established, p1, p2);
 			m_TxtDisplayer->setText(QString::number(Calculate(), 'g', 3) + QString(" mm"));
 		}
@@ -490,14 +490,14 @@ void MeasurementWidget::CbbChanged(int)
 			pc.px = (short)m_Handler3D->Width() / 2;
 			pc.py = (short)m_Handler3D->Height() / 2;
 			Point p1, p2;
-			if (m_CbbLb1->currentItem() == 0)
+			if (m_CbbLb1->currentIndex() == 0)
 				p1 = pc;
 			else
-				p1 = m_Labels[m_CbbLb1->currentItem() - 1].p;
-			if (m_CbbLb2->currentItem() == 0)
+				p1 = m_Labels[m_CbbLb1->currentIndex() - 1].p;
+			if (m_CbbLb2->currentIndex() == 0)
 				p2 = pc;
 			else
-				p2 = m_Labels[m_CbbLb2->currentItem() - 1].p;
+				p2 = m_Labels[m_CbbLb2->currentIndex() - 1].p;
 			addLine(&m_Established, p1, p2);
 			m_TxtDisplayer->setText(QString::number(Calculate(), 'g', 3) + QString(" mm"));
 		}
@@ -507,14 +507,14 @@ void MeasurementWidget::CbbChanged(int)
 			pc.px = (short)m_Handler3D->Width() / 2;
 			pc.py = (short)m_Handler3D->Height() / 2;
 			Point p1, p2;
-			if (m_CbbLb1->currentItem() == 0)
+			if (m_CbbLb1->currentIndex() == 0)
 				p1 = pc;
 			else
-				p1 = m_Labels[m_CbbLb1->currentItem() - 1].p;
-			if (m_CbbLb2->currentItem() == 0)
+				p1 = m_Labels[m_CbbLb1->currentIndex() - 1].p;
+			if (m_CbbLb2->currentIndex() == 0)
 				p2 = pc;
 			else
-				p2 = m_Labels[m_CbbLb2->currentItem() - 1].p;
+				p2 = m_Labels[m_CbbLb2->currentIndex() - 1].p;
 			addLine(&m_Established, p1, p2);
 			m_TxtDisplayer->setText(QString("(") + QString::number(Calculatevec(0), 'g', 3) +
 															QString(",") + QString::number(Calculatevec(1), 'g', 3) +
@@ -527,18 +527,18 @@ void MeasurementWidget::CbbChanged(int)
 			pc.px = (short)m_Handler3D->Width() / 2;
 			pc.py = (short)m_Handler3D->Height() / 2;
 			Point p1, p2, p3;
-			if (m_CbbLb1->currentItem() == 0)
+			if (m_CbbLb1->currentIndex() == 0)
 				p1 = pc;
 			else
-				p1 = m_Labels[m_CbbLb1->currentItem() - 1].p;
-			if (m_CbbLb2->currentItem() == 0)
+				p1 = m_Labels[m_CbbLb1->currentIndex() - 1].p;
+			if (m_CbbLb2->currentIndex() == 0)
 				p2 = pc;
 			else
-				p2 = m_Labels[m_CbbLb2->currentItem() - 1].p;
-			if (m_CbbLb3->currentItem() == 0)
+				p2 = m_Labels[m_CbbLb2->currentIndex() - 1].p;
+			if (m_CbbLb3->currentIndex() == 0)
 				p3 = pc;
 			else
-				p3 = m_Labels[m_CbbLb3->currentItem() - 1].p;
+				p3 = m_Labels[m_CbbLb3->currentIndex() - 1].p;
 			addLine(&m_Established, p1, p2);
 			addLine(&m_Established, p2, p3);
 			m_TxtDisplayer->setText(QString::number(Calculate(), 'g', 3) + QString(" deg"));
@@ -549,22 +549,22 @@ void MeasurementWidget::CbbChanged(int)
 			pc.px = (short)m_Handler3D->Width() / 2;
 			pc.py = (short)m_Handler3D->Height() / 2;
 			Point p1, p2, p3, p4;
-			if (m_CbbLb1->currentItem() == 0)
+			if (m_CbbLb1->currentIndex() == 0)
 				p1 = pc;
 			else
-				p1 = m_Labels[m_CbbLb1->currentItem() - 1].p;
-			if (m_CbbLb2->currentItem() == 0)
+				p1 = m_Labels[m_CbbLb1->currentIndex() - 1].p;
+			if (m_CbbLb2->currentIndex() == 0)
 				p2 = pc;
 			else
-				p2 = m_Labels[m_CbbLb2->currentItem() - 1].p;
-			if (m_CbbLb3->currentItem() == 0)
+				p2 = m_Labels[m_CbbLb2->currentIndex() - 1].p;
+			if (m_CbbLb3->currentIndex() == 0)
 				p3 = pc;
 			else
-				p3 = m_Labels[m_CbbLb3->currentItem() - 1].p;
-			if (m_CbbLb4->currentItem() == 0)
+				p3 = m_Labels[m_CbbLb3->currentIndex() - 1].p;
+			if (m_CbbLb4->currentIndex() == 0)
 				p4 = pc;
 			else
-				p4 = m_Labels[m_CbbLb4->currentItem() - 1].p;
+				p4 = m_Labels[m_CbbLb4->currentIndex() - 1].p;
 			addLine(&m_Established, p1, p2);
 			addLine(&m_Established, p2, p3);
 			addLine(&m_Established, p3, p4);
@@ -654,17 +654,17 @@ void MeasurementWidget::Getlabels()
 	QObject_disconnect(m_CbbLb3, SIGNAL(activated(int)), this, SLOT(CbbChanged(int)));
 	QObject_disconnect(m_CbbLb4, SIGNAL(activated(int)), this, SLOT(CbbChanged(int)));
 
-	m_CbbLb1->insertItem(QString("Center"));
-	m_CbbLb2->insertItem(QString("Center"));
-	m_CbbLb3->insertItem(QString("Center"));
-	m_CbbLb4->insertItem(QString("Center"));
+	m_CbbLb1->addItem(QString("Center"));
+	m_CbbLb2->addItem(QString("Center"));
+	m_CbbLb3->addItem(QString("Center"));
+	m_CbbLb4->addItem(QString("Center"));
 
 	for (size_t i = 0; i < m_Labels.size(); i++)
 	{
-		m_CbbLb1->insertItem(QString(m_Labels[i].name.c_str()));
-		m_CbbLb2->insertItem(QString(m_Labels[i].name.c_str()));
-		m_CbbLb3->insertItem(QString(m_Labels[i].name.c_str()));
-		m_CbbLb4->insertItem(QString(m_Labels[i].name.c_str()));
+		m_CbbLb1->addItem(QString(m_Labels[i].name.c_str()));
+		m_CbbLb2->addItem(QString(m_Labels[i].name.c_str()));
+		m_CbbLb3->addItem(QString(m_Labels[i].name.c_str()));
+		m_CbbLb4->addItem(QString(m_Labels[i].name.c_str()));
 	}
 
 	QObject_connect(m_CbbLb1, SIGNAL(activated(int)), this, SLOT(CbbChanged(int)));
@@ -685,7 +685,7 @@ float MeasurementWidget::Calculate()
 	float value = 0;
 	if (m_RbLbls->isChecked())
 	{
-		if (m_CbbLb1->currentItem() == 0)
+		if (m_CbbLb1->currentIndex() == 0)
 		{
 			m_Pt[0][0] = (int)m_Handler3D->Width() / 2;
 			m_Pt[0][1] = (int)m_Handler3D->Height() / 2;
@@ -693,11 +693,11 @@ float MeasurementWidget::Calculate()
 		}
 		else
 		{
-			m_Pt[0][0] = (int)m_Labels[m_CbbLb1->currentItem() - 1].p.px;
-			m_Pt[0][1] = (int)m_Labels[m_CbbLb1->currentItem() - 1].p.py;
-			m_Pt[0][2] = (int)m_Labels[m_CbbLb1->currentItem() - 1].slicenr;
+			m_Pt[0][0] = (int)m_Labels[m_CbbLb1->currentIndex() - 1].p.px;
+			m_Pt[0][1] = (int)m_Labels[m_CbbLb1->currentIndex() - 1].p.py;
+			m_Pt[0][2] = (int)m_Labels[m_CbbLb1->currentIndex() - 1].slicenr;
 		}
-		if (m_CbbLb2->currentItem() == 0)
+		if (m_CbbLb2->currentIndex() == 0)
 		{
 			m_Pt[1][0] = (int)m_Handler3D->Width() / 2;
 			m_Pt[1][1] = (int)m_Handler3D->Height() / 2;
@@ -705,11 +705,11 @@ float MeasurementWidget::Calculate()
 		}
 		else
 		{
-			m_Pt[1][0] = (int)m_Labels[m_CbbLb2->currentItem() - 1].p.px;
-			m_Pt[1][1] = (int)m_Labels[m_CbbLb2->currentItem() - 1].p.py;
-			m_Pt[1][2] = (int)m_Labels[m_CbbLb2->currentItem() - 1].slicenr;
+			m_Pt[1][0] = (int)m_Labels[m_CbbLb2->currentIndex() - 1].p.px;
+			m_Pt[1][1] = (int)m_Labels[m_CbbLb2->currentIndex() - 1].p.py;
+			m_Pt[1][2] = (int)m_Labels[m_CbbLb2->currentIndex() - 1].slicenr;
 		}
-		if (m_CbbLb3->currentItem() == 0)
+		if (m_CbbLb3->currentIndex() == 0)
 		{
 			m_Pt[2][0] = (int)m_Handler3D->Width() / 2;
 			m_Pt[2][1] = (int)m_Handler3D->Height() / 2;
@@ -717,11 +717,11 @@ float MeasurementWidget::Calculate()
 		}
 		else
 		{
-			m_Pt[2][0] = (int)m_Labels[m_CbbLb3->currentItem() - 1].p.px;
-			m_Pt[2][1] = (int)m_Labels[m_CbbLb3->currentItem() - 1].p.py;
-			m_Pt[2][2] = (int)m_Labels[m_CbbLb3->currentItem() - 1].slicenr;
+			m_Pt[2][0] = (int)m_Labels[m_CbbLb3->currentIndex() - 1].p.px;
+			m_Pt[2][1] = (int)m_Labels[m_CbbLb3->currentIndex() - 1].p.py;
+			m_Pt[2][2] = (int)m_Labels[m_CbbLb3->currentIndex() - 1].slicenr;
 		}
-		if (m_CbbLb4->currentItem() == 0)
+		if (m_CbbLb4->currentIndex() == 0)
 		{
 			m_Pt[3][0] = (int)m_Handler3D->Width() / 2;
 			m_Pt[3][1] = (int)m_Handler3D->Height() / 2;
@@ -729,9 +729,9 @@ float MeasurementWidget::Calculate()
 		}
 		else
 		{
-			m_Pt[3][0] = (int)m_Labels[m_CbbLb4->currentItem() - 1].p.px;
-			m_Pt[3][1] = (int)m_Labels[m_CbbLb4->currentItem() - 1].p.py;
-			m_Pt[3][2] = (int)m_Labels[m_CbbLb4->currentItem() - 1].slicenr;
+			m_Pt[3][0] = (int)m_Labels[m_CbbLb4->currentIndex() - 1].p.px;
+			m_Pt[3][1] = (int)m_Labels[m_CbbLb4->currentIndex() - 1].p.py;
+			m_Pt[3][2] = (int)m_Labels[m_CbbLb4->currentIndex() - 1].slicenr;
 		}
 	}
 
@@ -817,7 +817,7 @@ float MeasurementWidget::Calculatevec(unsigned short orient)
 	float value = 0;
 	if (m_RbLbls->isChecked())
 	{
-		if (m_CbbLb1->currentItem() == 0)
+		if (m_CbbLb1->currentIndex() == 0)
 		{
 			m_Pt[0][0] = (int)m_Handler3D->Width() / 2;
 			m_Pt[0][1] = (int)m_Handler3D->Height() / 2;
@@ -825,11 +825,11 @@ float MeasurementWidget::Calculatevec(unsigned short orient)
 		}
 		else
 		{
-			m_Pt[0][0] = (int)m_Labels[m_CbbLb1->currentItem() - 1].p.px;
-			m_Pt[0][1] = (int)m_Labels[m_CbbLb1->currentItem() - 1].p.py;
-			m_Pt[0][2] = (int)m_Labels[m_CbbLb1->currentItem() - 1].slicenr;
+			m_Pt[0][0] = (int)m_Labels[m_CbbLb1->currentIndex() - 1].p.px;
+			m_Pt[0][1] = (int)m_Labels[m_CbbLb1->currentIndex() - 1].p.py;
+			m_Pt[0][2] = (int)m_Labels[m_CbbLb1->currentIndex() - 1].slicenr;
 		}
-		if (m_CbbLb2->currentItem() == 0)
+		if (m_CbbLb2->currentIndex() == 0)
 		{
 			m_Pt[1][0] = (int)m_Handler3D->Width() / 2;
 			m_Pt[1][1] = (int)m_Handler3D->Height() / 2;
@@ -837,9 +837,9 @@ float MeasurementWidget::Calculatevec(unsigned short orient)
 		}
 		else
 		{
-			m_Pt[1][0] = (int)m_Labels[m_CbbLb2->currentItem() - 1].p.px;
-			m_Pt[1][1] = (int)m_Labels[m_CbbLb2->currentItem() - 1].p.py;
-			m_Pt[1][2] = (int)m_Labels[m_CbbLb2->currentItem() - 1].slicenr;
+			m_Pt[1][0] = (int)m_Labels[m_CbbLb2->currentIndex() - 1].p.px;
+			m_Pt[1][1] = (int)m_Labels[m_CbbLb2->currentIndex() - 1].p.py;
+			m_Pt[1][2] = (int)m_Labels[m_CbbLb2->currentIndex() - 1].slicenr;
 		}
 	}
 
