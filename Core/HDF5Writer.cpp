@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
- * 
+ *
  * This file is part of iSEG
  * (see https://github.com/ITISFoundation/osparc-iseg).
- * 
+ *
  * This software is released under the MIT License.
  *  https://opensource.org/licenses/MIT
  */
@@ -504,7 +504,7 @@ int HDF5Writer::WriteData(const void* data, const std::string& type, const std::
 		if (BloscEnabled())
 		{
 			unsigned int cd_values[7];
-			cd_values[4] = compression;		/* compression level */
+			cd_values[4] = m_Compression; /* compression level */
 			cd_values[5] = 1;							/* 0: shuffle not active, 1: shuffle active */
 			cd_values[6] = BLOSC_BLOSCLZ; /* the actual compressor to use */
 			H5Pset_filter(plist, FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);

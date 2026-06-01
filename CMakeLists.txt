@@ -1,9 +1,9 @@
 ##
 ## Copyright (c) 2021 The Foundation for Research on Information Technologies in Society (IT'IS).
-## 
+##
 ## This file is part of iSEG
 ## (see https://github.com/ITISFoundation/osparc-iseg).
-## 
+##
 ## This software is released under the MIT License.
 ##  https://opensource.org/licenses/MIT
 ##
@@ -14,14 +14,14 @@ SET(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Which Build Types to
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-SET(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 SET(BUILD_SHARED_LIBS ON)
 INCLUDE(CTest)
 ENABLE_TESTING()
 
-LIST( APPEND ISEG_CMAKE_FILES_INCLUDES 
+LIST( APPEND ISEG_CMAKE_FILES_INCLUDES
 	${CMAKE_SOURCE_DIR}/CMake/CommonMacros.cmake
 	${CMAKE_SOURCE_DIR}/CMake/CMakeSetProperty.cmake
 	${CMAKE_SOURCE_DIR}/CMake/GetGitRevisionDescription.cmake
@@ -39,12 +39,12 @@ FOREACH( include_file ${ISEG_CMAKE_FILES_INCLUDES} )
 	INCLUDE( ${include_file} )
 ENDFOREACH()
 
-MSVC_ONLY_EDIT_PROJECT( CMakeIncludes 
+MSVC_ONLY_EDIT_PROJECT( CMakeIncludes
 	${ISEG_CMAKE_FILES_INCLUDES}
 	${INSTALL_ALL_USED_LIBRARIES_CMAKE} # to make sure, it is always added independent of option
 )
 
-MSVC_ONLY_EDIT_PROJECT( ProjectFiles 
+MSVC_ONLY_EDIT_PROJECT( ProjectFiles
 	config.h.in
 	LICENSE
 	README.md
