@@ -3136,7 +3136,7 @@ void MainWindow::LoadAny(const QString& loadfilename)
 	}
 
 	// Deduce the importer from the file-ending
-	const auto extension = boost::filesystem::extension(file_path);
+	const auto extension = file_path.extension().string();
 
 	static const std::string proj_extenstion = ".prj";
 	static const std::string s4l_extenstion = ".h5";
@@ -6565,24 +6565,36 @@ void MainWindow::Wheelrotated(int delta)
 	const double old_zoom = m_WorkShow->ReturnZoom();
 	const double new_zoom = old_zoom * pow(1.2, delta / 120.0);
 
-	// Content coordinates under the mouse cursor before zoom
+	// mouse_pos is in widget (content) coordinates, i.e. already includes scroll offset.
+	// viewport-relative position = mouse_pos - scroll_value
 	const QPoint mouse_pos = m_BmpShow->GetMousePosZoom();
-	const int bmp_cx = m_BmpScroller->horizontalScrollBar()->value() + mouse_pos.x();
-	const int bmp_cy = m_BmpScroller->verticalScrollBar()->value() + mouse_pos.y();
-	const int work_cx = m_WorkScroller->horizontalScrollBar()->value() + mouse_pos.x();
-	const int work_cy = m_WorkScroller->verticalScrollBar()->value() + mouse_pos.y();
+	const int bmp_vx = mouse_pos.x() - m_BmpScroller->horizontalScrollBar()->value();
+	const int bmp_vy = mouse_pos.y() - m_BmpScroller->verticalScrollBar()->value();
+	const int work_vx = mouse_pos.x() - m_WorkScroller->horizontalScrollBar()->value();
+	const int work_vy = mouse_pos.y() - m_WorkScroller->verticalScrollBar()->value();
+
+	// Block scroll bar signals to prevent scroll-sync handlers from
+	// firing during widget resize and corrupting scroll positions
+	m_TomoveScroller = false;
+	m_BmpScroller->horizontalScrollBar()->blockSignals(true);
+	m_BmpScroller->verticalScrollBar()->blockSignals(true);
+	m_WorkScroller->horizontalScrollBar()->blockSignals(true);
+	m_WorkScroller->verticalScrollBar()->blockSignals(true);
 
 	// Apply zoom (resizes both viewer widgets)
 	m_ZoomWidget->ZoomChanged(new_zoom);
 
 	// Scroll so the same image pixel stays under the cursor
 	const double ratio = new_zoom / old_zoom;
+	m_BmpScroller->horizontalScrollBar()->setValue(qRound(mouse_pos.x() * ratio - bmp_vx));
+	m_BmpScroller->verticalScrollBar()->setValue(qRound(mouse_pos.y() * ratio - bmp_vy));
+	m_WorkScroller->horizontalScrollBar()->setValue(qRound(mouse_pos.x() * ratio - work_vx));
+	m_WorkScroller->verticalScrollBar()->setValue(qRound(mouse_pos.y() * ratio - work_vy));
 
-	m_TomoveScroller = false;
-	m_BmpScroller->horizontalScrollBar()->setValue(static_cast<int>(bmp_cx * ratio - mouse_pos.x()));
-	m_BmpScroller->verticalScrollBar()->setValue(static_cast<int>(bmp_cy * ratio - mouse_pos.y()));
-	m_WorkScroller->horizontalScrollBar()->setValue(static_cast<int>(work_cx * ratio - mouse_pos.x()));
-	m_WorkScroller->verticalScrollBar()->setValue(static_cast<int>(work_cy * ratio - mouse_pos.y()));
+	m_BmpScroller->horizontalScrollBar()->blockSignals(false);
+	m_BmpScroller->verticalScrollBar()->blockSignals(false);
+	m_WorkScroller->horizontalScrollBar()->blockSignals(false);
+	m_WorkScroller->verticalScrollBar()->blockSignals(false);
 	m_TomoveScroller = true;
 }
 

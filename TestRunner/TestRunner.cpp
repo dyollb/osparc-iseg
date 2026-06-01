@@ -97,7 +97,7 @@ fs::path get_exe_dir()
 	}
 
 	fs::path exe_path(path);
-	return exe_path.branch_path();
+	return exe_path.parent_path();
 }
 
 #elif defined(BOOST_HAS_UNISTD_H) // POSIX API
@@ -225,7 +225,6 @@ int SEH_unit_test_main(boost::unit_test::init_unit_test_func init_func, int argc
 	return ::boost::unit_test::unit_test_main(init_func, argc, argv);
 }
 } // namespace
-
 
 int BOOST_TEST_CALL_DECL main(int argc, char* argv[])
 {

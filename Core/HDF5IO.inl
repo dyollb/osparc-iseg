@@ -47,9 +47,9 @@ bool HDF5IO::ReadData(handle_id_type file, const std::string& name, size_t arg_o
 	hsize_t dims_out[1]; /* dataset dimensions */
 	herr_t status;
 
-	hsize_t offset_in[1];	/* size of the hyperslab in the file */
+	hsize_t offset_in[1];	 /* size of the hyperslab in the file */
 	hsize_t count[1];			 /* size of the hyperslab in the file */
-	hsize_t count_out[1];	/* size of the hyperslab in memory */
+	hsize_t count_out[1];	 /* size of the hyperslab in memory */
 	hsize_t offset_out[1]; /* size of the hyperslab in memory */
 	int status_n, rank;
 
@@ -134,9 +134,9 @@ bool HDF5IO::WriteData(handle_id_type file, const std::string& name, T** const s
 			if (BloscEnabled())
 			{
 				unsigned int cd_values[7];
-				cd_values[4] = CompressionLevel; /* compression level */
-				cd_values[5] = 1;           /* 0: shuffle not active, 1: shuffle active */
-	    		cd_values[6] = BLOSC_BLOSCLZ; /* the actual compressor to use */
+				cd_values[4] = m_CompressionLevel; /* compression level */
+				cd_values[5] = 1;									 /* 0: shuffle not active, 1: shuffle active */
+				cd_values[6] = BLOSC_BLOSCLZ;			 /* the actual compressor to use */
 				H5Pset_filter(properties, FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values);
 			}
 			else

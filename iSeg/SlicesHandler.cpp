@@ -6481,10 +6481,10 @@ int SlicesHandler::ExtractTissueSurfaces(const std::string& filename, std::vecto
 		field[i] = 0;
 
 	// Check the label field
-	check(label_field != nullptr);
-	//check( labelField->GetPointData()->HasArray(tissueIndexArrayName) );
-	check(label_field->GetFieldData()->HasArray(tissue_name_array_name));
-	check(label_field->GetFieldData()->HasArray(tissue_color_array_name));
+	ISEG_CHECK(label_field != nullptr);
+	//ISEG_CHECK( labelField->GetPointData()->HasArray(tissueIndexArrayName) );
+	ISEG_CHECK(label_field->GetFieldData()->HasArray(tissue_name_array_name));
+	ISEG_CHECK(label_field->GetFieldData()->HasArray(tissue_color_array_name));
 
 	//
 	// Now extract the surface from the label field
@@ -6520,9 +6520,9 @@ int SlicesHandler::ExtractTissueSurfaces(const std::string& filename, std::vecto
 	}
 	if (output)
 	{
-		//check( output->GetCellData()->HasArray(tissueIndexArrayName) );
-		check(output->GetFieldData()->HasArray(tissue_name_array_name));
-		check(output->GetFieldData()->HasArray(tissue_color_array_name));
+		//ISEG_CHECK( output->GetCellData()->HasArray(tissueIndexArrayName) );
+		ISEG_CHECK(output->GetFieldData()->HasArray(tissue_name_array_name));
+		ISEG_CHECK(output->GetFieldData()->HasArray(tissue_color_array_name));
 	}
 
 	//
@@ -6543,9 +6543,9 @@ int SlicesHandler::ExtractTissueSurfaces(const std::string& filename, std::vecto
 	}
 	if (output)
 	{
-		//check( output->GetCellData()->HasArray(tissueIndexArrayName) );
-		check(output->GetFieldData()->HasArray(tissue_name_array_name));
-		check(output->GetFieldData()->HasArray(tissue_color_array_name));
+		//ISEG_CHECK( output->GetCellData()->HasArray(tissueIndexArrayName) );
+		ISEG_CHECK(output->GetFieldData()->HasArray(tissue_name_array_name));
+		ISEG_CHECK(output->GetFieldData()->HasArray(tissue_color_array_name));
 	}
 
 	//
@@ -6609,9 +6609,9 @@ int SlicesHandler::ExtractTissueSurfaces(const std::string& filename, std::vecto
 	}
 	if (output)
 	{
-		//check( output->GetCellData()->HasArray(tissueIndexArrayName) );
-		check(output->GetFieldData()->HasArray(tissue_name_array_name));
-		check(output->GetFieldData()->HasArray(tissue_color_array_name));
+		//ISEG_CHECK( output->GetCellData()->HasArray(tissueIndexArrayName) );
+		ISEG_CHECK(output->GetFieldData()->HasArray(tissue_name_array_name));
+		ISEG_CHECK(output->GetFieldData()->HasArray(tissue_color_array_name));
 	}
 
 	//

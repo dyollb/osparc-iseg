@@ -18,12 +18,12 @@ namespace iseg {
 #ifdef USE_HDF5_BLOSC
 bool _blosc_enabled = true;
 #else
-bool blosc_enabled = false;
+bool _blosc_enabled = false;
 #endif
 
 bool BloscEnabled()
 {
-	return blosc_enabled;
+	return _blosc_enabled;
 }
 
 void SetBloscEnabled(bool on)
